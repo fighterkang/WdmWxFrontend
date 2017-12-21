@@ -1,0 +1,4 @@
+build/*.js
+config/*.js
+src/views/components/scroller/*
+src/api/map.js

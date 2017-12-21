@@ -1,0 +1,56 @@
+<template lang="html">
+  <transition name="fade">
+    <div class="layer container box" v-if="show">
+      <span class="toast-container box box-item" :class="{large: text.length> 10}">
+        {{ text }}
+      </span>
+    </div>
+  </transition>
+</template>
+
+<script>
+// import router from '@/router'
+import { mapState } from 'vuex'
+export default {
+  data() {
+    return {
+    }
+  },
+  computed: {
+    ...mapState('itoast', [
+      'text',
+      'show',
+    ]),
+  },
+  methods: {
+  },
+}
+</script>
+
+<style lang="less" scoped>
+@import "../../theme/index.less";
+.container {
+  background: rgba(0,0,0,.1);
+  transition: all .2s linear;
+  pointer-events: none;
+  text-align: center;
+  z-index: 1000;
+}
+
+.toast-container{
+  background-color:@activeFontColor;
+  color:white;
+  height:8vh;
+  border-radius: 8vh;
+  font-size: 4.5vw;
+  max-width: 75vw;
+  text-align: center;
+  margin:auto;
+  margin-top:10vh;
+  padding:0 5vw;
+}
+.toast-container.large{
+  height:10vh;
+  border-radius:10vh;
+}
+</style>
