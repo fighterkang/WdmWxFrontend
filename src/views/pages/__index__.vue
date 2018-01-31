@@ -1,5 +1,7 @@
 <template lang="html">
-  
+  <div class="container">
+
+  </div>
 </template>
 <script>
 export default {
@@ -16,5 +18,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  
+  @import url('../../theme/index.less');
+  .container {
+    
+  }
 </style>

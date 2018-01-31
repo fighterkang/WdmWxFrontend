@@ -2,13 +2,17 @@ import store from '../store'
 import Vue from 'vue'
 import apiConfig from '@/config/api'
 import Router from '@/router'
-import Cookie from 'js-cookie'
+import Cookie from 'store'
 import routeConfig from '@/config/route'
+import { UploaderBuilder } from 'qiniu4js'
 import _ from 'lodash'
 import wx from 'weixin-js-sdk'
 const THIS = new Vue()
 const { dispatch } = store
 const Helper = {
+  isTest() {
+    return process.env.NODE_ENV !== 'production'
+  },
   preSetParams(params) {
     let newData = {}
     for (let i in params) {
@@ -18,39 +22,63 @@ const Helper = {
     }
     return newData
   },
-  ajax({ params = {}, method = 'GET', url, success = () => { }, error = () => { } }) {
+  ajax({ params = {}, method = 'POST', url, urlType = 'api', success = () => { }, error = () => { } }) {
     if (!url) throw new Error('Ajax error,without url!')
-    let openid = Helper.getUrlParamsByKey('openid')
-    params = Helper.preSetParams(openid ? Object.assign(params, { openid }) : params)
-    url = Helper.getApi() + url
-    return THIS.$http({ method, url, params }).then(
-      ({ bodyText = '{}' }) => {
-        let { msg, data } = JSON.parse(bodyText)
-        if (msg) {
-          Helper.message.toast({
-            text: msg,
-            long: 2000,
-          })
+    let basicCookie = Helper.getCookie('basic')
+    let accesstoken = _.get(!basicCookie ? {} : JSON.parse(basicCookie), 'token')
+    params = method === 'GET' && accesstoken ? Object.assign(params, { accesstoken }) : params
+    url = apiConfig[urlType] + url
+    // alert('url:' + url + ',params' + JSON.stringify(params))
+    return new Promise((resolve, reject) => {
+      THIS.$http(
+        {
+          method,
+          url,
+          params: method === 'GET' ? params : { accesstoken },
+          body: method === 'POST' ? JSON.stringify(params) : {},
+          // headers: {
+          //   'Content-Type': 'application/json',
+          // },
         }
-        success(data)
-      },
-      () => {
-        Helper.message.toast({
-          text: '网络繁忙，请稍候再试',
-          long: 2000,
-        })
-        error()
-      },
-    )
+      ).then(
+        ({ bodyText = '{}' }) => {
+          // alert(bodyText)
+          let data = JSON.parse(bodyText)
+          if (data.status === 10005) {
+            Router.push({ name: 'Login' })
+            Helper.message.toast({ text: data.msg || '登录信息有误', long: 2000 })
+          } else {
+            resolve(data)
+          }
+        },
+        () => {
+          Helper.message.toast({ text: '网络繁忙，请稍候再试', long: 2000 })
+          reject()
+        },
+      )
+    })
   },
   getCookie(key) {
     return Cookie.get(key)
   },
   setCookie(key, data) {
-    Cookie.set(key, data, { expires: 0.04 })
+    Cookie.set(key, JSON.stringify(data), { expires: 0.04 })
     if (key === 'basic') {
       dispatch('basic/setLoginData', data)
     }
+  },
+  clearCookie() {
+    Cookie.clearAll()
+  },
+  htmlToText(str) {
+    str = str.replace(/<[^>]+>/g, '')
+    str = str.replace(/[\r\n]/g, '')
+    str = str.replace(/&nbsp;/g, '')
+    return str
+  },
+  cuteText(str, len = 70) {
+    str = str.substr(0, len)
+    return str + (str.length >= len ? '...' : '')
   },
   message: {
     toast({ text, long } = {}) {
@@ -101,10 +129,17 @@ const Helper = {
     // return matchUrl ? matchUrl[0] + 'gzh/?service=' : apiConfig['api']
     return apiConfig['api']
   },
+  getUrlHref() {
+    const href = window.location.href
+    return href.substr(0, href.indexOf('/') === -1 ? href.length - 1 : href.indexOf('/'))
+  },
   getUrlParams(key) {
     let href = window.location.href
-    let pramsString = href.substring(href.indexOf('?') + 1, href.indexOf('#'))
-    let paramsArr = pramsString.split('&')
+    // let pramsString = href.substring(href.indexOf('?') + 1, href.indexOf('#'))
+    let wIndex = _.lastIndexOf(href.split(''), '?')
+    // console.log(wIndex)
+    let pramsString = wIndex !== -1 ? href.substr(wIndex + 1) : ''
+    let paramsArr = pramsString ? pramsString.split('&') : []
     let returnData = {}
     paramsArr.map((item) => {
       let arr = item.split('=')
@@ -115,6 +150,22 @@ const Helper = {
   getUrlParamsByKey(key) {
     let params = Helper.getUrlParams()
     return params[key] || null
+  },
+  testParamsComplete({ params = {}, except = [], contain = [] }) {
+    let obj = !_.isEmpty(contain) ? contain : params
+    let emptyArr = []
+    let isEmpty = (o) => {
+      return (Helper.isType(o, {}) && _.isEmpty(o)) || (Helper.isType(o, '') && _.trim(o) === '') || _.isUndefined(o) || Helper.isType(o, null)
+    }
+    for (let i in obj) {
+      let key = _.isEmpty(contain) ? i : obj[i]
+      let item = params[key]
+      if (isEmpty(item) && except.indexOf(key) === -1) emptyArr.push(key)
+    }
+    return emptyArr
+  },
+  isType(obj1, obj2) {
+    return Object.prototype.toString.call(obj1) === Object.prototype.toString.call(obj2)
   },
   requireAll(requireContext) {
     const ret = {}
@@ -251,6 +302,73 @@ const Helper = {
   isAndroid() {
     let u = navigator.userAgent
     return u.indexOf('Android') > -1 || u.indexOf('Adr') > -1
+  },
+  isPc() {
+    const userAgentInfo = navigator.userAgent
+    const Agents = ['Android', 'iPhone', 'SymbianOS', 'Windows Phone', 'iPad', 'iPod']
+    let flag = true
+    for (let v = 0; v < Agents.length; v++) {
+      if (userAgentInfo.indexOf(Agents[v]) > 0) {
+        flag = false
+        break
+      }
+    }
+    return flag
+  },
+  judgeDevice() {
+    if (Helper.isTest()) return
+    const isPc = false
+    if (isPc !== Helper.isPc()) {
+      window.location.href = `${Helper.getUrlHref()}/${isPc ? 'phone' : 'pc'}`
+    }
+  },
+  initUploadImage(btnId, success = () => {}, key) {
+    // get upliod token and url
+    Helper.ajax({
+      url: 'qiniu/getToken',
+      method: 'GET',
+    }).then(({data}) => {
+      this.uptokenData = data
+      this.createUpload({
+        ...data,
+        btnId,
+        success,
+        key,
+      })
+    })
+  },
+  createUpload({ btnId, token, cdnUrl, success = () => { console.log('withOut callback Fn!') }, key = () => {} }) {
+    // 创建上传对象
+    new UploaderBuilder()
+    .debug(true)
+    .button(btnId)
+    .domain({http: 'http://up-z2.qiniu.com'})
+    .retry(0)
+    .chunk(true)
+    .scale([1000, 0])
+    .auto(true)
+    .multiple(true)
+    // .accept(['image/*', 'video/*', 'mov'])
+    .tokenShare(true)
+    .tokenFunc((setToken, task) => {
+      setToken(token)
+    })
+    .listener({
+      onReady(tasks) {
+        // console.log('onReady', tasks)
+      },
+      onStart(tasks) {
+        // console.log('onStart', tasks)
+      },
+      onTaskGetKey: key,
+      onTaskSuccess: (task) => {
+        success(cdnUrl + '/' + task.result.key)
+      },
+      onFinish(tasks) {
+        // console.log('onFinish', tasks)
+      },
+    })
+    .build()
   },
 }
 

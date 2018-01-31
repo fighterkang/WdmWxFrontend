@@ -1,33 +1,44 @@
 <template lang="html">
-  <div class="s-container">
+  <div class="s-container" @click="getDetail">
     <div class="s-title box box-y-center overtext">
-      <div class="overtext">如果孩子想干嘛就干嘛，还要父母做什么？如果孩子想干嘛就干嘛，还要父母做什么？</div>
-      <div class="auther box box-y-center" v-if="$route.name!=='Forum'">微笑天使</div>
+      <div class="overtext">{{ basicData.consultName }}</div>
+      <div class="auther box box-y-center" v-if="$route.name!=='Forum'">{{ basicData.nickName }}</div>
     </div>
-    <div class="s-content" v-if="$route.name!=='Collect'">
-      <div class="decoration overtext">
-        作为父母，我们也许天生本能就有一种责任感，让我们不能对孩子不管不顾
+    <div class="s-content box" v-if="$route.name!=='Collect'">
+      <div class="decoration overtext3 box-col-flex">
+        {{ $Helper.cuteText($Helper.htmlToText(basicData.consultDetail)) }}
       </div>
-      <div class="image-container box box-space-bettwen">
-        <img src="static/slider/0.jpg" v-for="i in 4"/>
+      <div class="image-container box box-item">
+        <img :src="basicData.consultImg" v-if="basicData.consultImg"/>
       </div>
     </div>
     <div class="s-bottom box" :style="{ marginTop: $route.name==='Collect' ? '2vh' : 0 }">
-      <div class="auther box box-y-center" v-if="$route.name==='Forum'">发表人：微笑天使</div>
-      <div class="date box box-y-center">2017-12-10 09:23</div>
+      <div class="auther box box-y-center" v-if="$route.name==='Forum'">发表人：{{ basicData.nickName }}</div>
+      <div class="date box box-y-center">{{ $Helper.formatTime(basicData.createTime) }}</div>
       <slot/>
     </div>
   </div>
 </template>
 <script>
+import Router from '@/router'
 export default {
   components: {},
   data() {
     return {}
   },
+  props: {
+    basicData: {
+      type: Object,
+      default: {},
+    },
+  },
   computed: {},
   watch: {},
-  methods: {},
+  methods: {
+    getDetail() {
+      Router.push({ name: 'PostDetail', params: { basicData: this.basicData } })
+    },
+  },
   created() {},
   mounted() {},
 }
@@ -41,8 +52,9 @@ export default {
     margin-bottom:1vh;
     .s-title{
       height: 5vh;
-      font-size: 3.8vw;
-      color: @fontColor3;
+      font-size: 4.3vw;
+      color: @fontColor2;
+      font-weight: 500;
       .auther{
         margin-left:5vw;
         font-size: 3.5vw;
@@ -51,11 +63,22 @@ export default {
     }
     .s-content{
       padding: 1vw 0;
-      font-size: 3vw;
-      color: @fontColor4;
+      font-size: 3.5vw;
+      color: @fontColor3;
+      height: 10vh;
+      .decoration{
+        height: 90%;
+        word-break: break-all;
+        text-align: justify;
+        margin-right: 3vw;
+        overflow: hidden;//必须
+        display: -webkit-box;//必须
+        -webkit-line-clamp: 2;//必须
+        -webkit-box-orient: vertical;//必须
+      }
       .image-container{
-        height: 10vh;
-        padding: 1.5vh 0;
+        height: 100%;
+        padding: 1vh 0;
         img{
           height: 100%;
         }

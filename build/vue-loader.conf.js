@@ -8,5 +8,10 @@ module.exports = {
       ? config.build.productionSourceMap
       : config.dev.cssSourceMap,
     extract: isProduction
-  })
+  }),
+  postcss: [
+    require('autoprefixer')({
+      browsers: ["last 20 versions", "Android >= 4.0", "iOS >= 7"]
+    })
+  ]
 }

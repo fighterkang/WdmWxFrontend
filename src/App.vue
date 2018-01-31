@@ -3,57 +3,38 @@
     <transition :name="transitionName">
       <router-view class='router-view' v-if="basicDataInitOver" v-wechat-title="$route.meta.title" img-set="static/logo2.png"></router-view>
     </transition>
-    <!-- <ISubBar v-show='showBar' /> -->
-    <IBottomSelect v-if="basicDataInitOver" />
     <IToast/>
-    <IComfirm/>
-    <IReward/>
     <IEntry/>
-    <IPrompt/>
-    <ILoading/>
-    <IImagePreview/>
-    <IWait/>
     <IMenu/>
+    <IBottomSelect/>
+    <ILoading/>
     <!--<audio  name="media" loop="loop" id="bg_music"><source src="" type="audio/mpeg"></audio>-->
   </div>
 </template>
 
 <script>
-import ISubBar from './views/components/ISubBar'
 import IBottomSelect from './views/components/IBottomSelect'
 import IToast from './views/components/IToast'
-import IComfirm from './views/components/IComfirm'
-import IReward from './views/components/IReward'
 import IEntry from './views/components/IEntry'
 import IPrompt from './views/components/IPrompt'
-import ILoading from './views/components/ILoading'
-import IImagePreview from './views/components/IImagePreview'
-import IWait from './views/components/IWait'
 import IMenu from './views/components/IMenu'
-// import wx from 'weixin-js-sdk'
-// import { MP } from '@/api/map'
-// import Router from '@/router'
-// import _ from 'lodash'
-// import wx from 'weixin-js-sdk'
+import ILoading from './views/components/ILoading'
+import { mapState } from 'vuex'
 export default {
   name: 'app',
   components: {
-    ISubBar,
-    IBottomSelect,
     IToast,
-    IComfirm,
-    IReward,
     IEntry,
     IPrompt,
-    ILoading,
-    IImagePreview,
-    IWait,
     IMenu,
+    IBottomSelect,
+    ILoading,
   },
   data() {
     return {
       transitionName: 'fade',
       basicDataInitOver: true,
+      Timer: null,
     }
   },
   watch: {
@@ -61,56 +42,31 @@ export default {
       let toDeep = this.$Helper.getRouteIndex(to.name)
       let fromDeep = this.$Helper.getRouteIndex(from.name)
       this.transitionName = toDeep > fromDeep ? 'slide-left' : (toDeep < fromDeep ? 'slide-right' : 'fade')
+      // this.testLogin(to.name)
     },
   },
   computed: {
+    ...mapState('basic', [
+      'basic',
+    ]),
     showBar() {
       return this.$store.state.showBar
     },
   },
   created() {
-    // if (['ExchangeList', 'GameList', 'Mine'].indexOf(this.$route.name) !== -1) {
-    //   this.$Helper.message.loading({
-    //     show: true,
-    //   })
-    // }
-    // let basic = this.$Helper.getUrlParams()
-    // this.$Helper.ajax({
-    //   params: {
-    //     PublicId: _.get(basic, 'PublicId'),
-    //   },
-    //   url: 'Open.WxUser',
-    //   success: ({ code, data }) => {
-    //     this.$Helper.setCookie('basic', data)
-    //     this.basicDataInitOver = true
-    //   },
-    // })
-    // this.$Helper.loadWx(() => {
-    //   // 微信初始化之后询问权限
-    //   // 询问是否可以录音
-    //   wx.ready(() => {
-    //     wx.getLocation({
-    //       type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-    //       success: (res) => {
-    //         let latitude = res.latitude // 纬度，浮点数，范围为90 ~ -90
-    //         let longitude = res.longitude // 经度，浮点数，范围为180 ~ -180。
-    //         MP('XKIopmBtkeqNab0SfwUTsnn64XGhX2dK').then(BMap => {
-    //           let point = new BMap.Point(longitude, latitude)
-    //           let geoc = new BMap.Geocoder()
-    //           geoc.getLocation(point, (rs) => {
-    //             let addComp = rs.addressComponents
-    //             this.$store.dispatch('setLocationCity', addComp.city)
-    //           })
-    //         })
-    //       },
-    //     })
-    //   })
-    // })
+    // this.$Helper.clearCookie()
+    // clear all cache
+    // if (!this.$Helper.isTest()) this.$Helper.clearCookie()
+    // judge is pc or phone
+    this.$Helper.judgeDevice()
+    // test basic cookie
+    let basicCookie = JSON.parse(this.$Helper.getCookie('basic') || '{}')
+    this.$Helper.setCookie('basic', basicCookie)
   },
-  methods: {
-  },
+  methods: {},
   beforeDestroy() {
     console.log('KO')
+    this.$Helper.clearCookie()
   },
 }
 </script>
@@ -146,12 +102,12 @@ a {
 }
 
 @font-face {
-  font-family: 'iconfont';  /* project id 332501 */
-  src: url('//at.alicdn.com/t/font_332501_0cnadvoglfzp8pvi.eot');
-  src: url('//at.alicdn.com/t/font_332501_0cnadvoglfzp8pvi.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_332501_0cnadvoglfzp8pvi.woff') format('woff'),
-  url('//at.alicdn.com/t/font_332501_0cnadvoglfzp8pvi.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_332501_0cnadvoglfzp8pvi.svg#iconfont') format('svg');
+  font-family: 'iconfont';  /* project id 516840 */
+  src: url('//at.alicdn.com/t/font_516840_97f9tojt8ajrlik9.eot');
+  src: url('//at.alicdn.com/t/font_516840_97f9tojt8ajrlik9.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_516840_97f9tojt8ajrlik9.woff') format('woff'),
+  url('//at.alicdn.com/t/font_516840_97f9tojt8ajrlik9.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_516840_97f9tojt8ajrlik9.svg#iconfont') format('svg');
 }
 
 #app {
@@ -164,7 +120,7 @@ a {
 
 .router-view {
   /*transition: all .5s cubic-bezier(.55, 0, .1, 1);*/
-  transition: all .4s cubic-bezier(.55, 0, .1, 1);
+  transition: all 400ms cubic-bezier(.55, 0, .1, 1);
   position: absolute;
   left: 0;
   right: 0;
@@ -198,6 +154,58 @@ input, textarea{
   -moz-osx-font-smoothing: grayscale;
 }
 
+// .box{
+//   display: flex;
+//   flex-wrap: nowrap;     //默认不换行
+// }
+
+// .box-wrap{
+//   flex-wrap: wrap
+// }
+
+// .box-x-left{
+//   justify-content: flex-start;
+// }
+
+// .box-x-center{
+//   justify-content: center;
+// }
+
+// .box-x-right{
+//   justify-content: flex-end;
+// }
+
+// .box-y-top{
+//   align-items: flex-start;
+// }
+
+// .box-y-center{
+//   align-items: center;
+// }
+
+// .box-y-bottom{
+//    align-items: flex-end;
+// }
+
+// .box-item{
+//   justify-content: center;
+//   align-items: center;
+// }
+
+// .box-col-flex{
+//   flex-grow: 1;
+//   flex-shrink: 0;
+//   flex-basis: 1px;
+//   width: 1px;
+// }
+
+// .box-row-flex{
+//   flex-grow: 1;
+//   flex-shrink: 0;
+//   flex-basis: 1px;
+//   height: 1px;
+// }
+
 .box {
   display: -webkit-box;
   /* 老版本语法: Safari, iOS, Android browser, older WebKit browsers. */
@@ -217,14 +225,6 @@ input, textarea{
   flex-direction:row;
   -webkit-flex-direction:row;
 }
-
-// .box>div,
-// .box>li,
-// .box>ul,
-// .box>h1,
-// .box>p {
-//   height: 100%;
-// }
 .box-x-center {
   -webkit-box-pack: center;
   -moz-justify-content: center;
@@ -252,6 +252,7 @@ input, textarea{
   -webkit-align-items: center;
   align-items: center;
 }
+
 
 .box-y-bottom {
   -webkit-box-align: end;
@@ -294,18 +295,20 @@ input, textarea{
 }
 
 .box-row-flex {
-  -webkit-box-flex: 1.0;
-  -moz-flex-grow: 1;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
+  -webkit-flex: 1;        /* Chrome */  
+  -ms-flex: 1;             /* IE 10 */  
+  flex: 1;                /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-box-flex: 1;     /* OLD - iOS 6-, Safari 3.1-6 */  
+  -moz-box-flex: 1;       /* OLD - Firefox 19- */    
   height: 1%;
 }
 
 .box-col-flex {
-  -webkit-box-flex: 1.0;
-  -moz-flex-grow: 1;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
+  -webkit-flex: 1;        /* Chrome */  
+  -ms-flex: 1;             /* IE 10 */  
+  flex: 1;                /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-box-flex: 1;     /* OLD - iOS 6-, Safari 3.1-6 */  
+  -moz-box-flex: 1;       /* OLD - Firefox 19- */     
   width: 1%;
 }
 
@@ -416,20 +419,6 @@ input, textarea{
   margin-left: (11/12)*100%;
 }
 
-.box-x-center {
-  -webkit-box-pack: center;
-  -moz-justify-content: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-}
-
-.box-y-center {
-  -webkit-box-align: center;
-  -moz-align-items: center;
-  -webkit-align-items: center;
-  align-items: center;
-}
-
 .half-x-line {
   height: 1px;
   background: #ccc;
@@ -495,6 +484,14 @@ input, textarea{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.overtext3{
+  overflow : hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 .bac-image {

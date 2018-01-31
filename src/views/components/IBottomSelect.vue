@@ -1,17 +1,12 @@
 <template lang="html">
-  <div class="layer" v-if="showBottomSelect" @click.self="hide">
-    <ul>
-      <li class="box box-item active">
-        版块一
+  <div class="container" @click="hide">
+    <div class="layer" v-if="showBottomSelect"/>
+    <ul :class="{ active: showBottomSelect }">
+      <li class="box box-item" v-for="(item, key) in classIdList" :key="key" @click="choseLi(item)">
+        {{ item.consultClassName }}
       </li>
-      <li class="box box-item">
-        版块二
-      </li>
-      <li class="box box-item">
-        版块三
-      </li>
-      <li class="box box-item">
-        <i class="iconfont">&#xe635;</i>
+      <li class="box box-item cancel active">
+        <img src="static/icon/cancel.png">
       </li>
     </ul>
   </div>
@@ -26,35 +21,60 @@ export default {
       icon: {
         cancel: 'static/icon/cancel.png',
       },
+      classIdList: [],
     }
   },
   computed: {
     ...mapState(['showBottomSelect']),
+    ...mapState('basic', [
+      'basic',
+    ]),
   },
   methods: {
     hide() {
       this.$store.dispatch('ToggleBottomSelect', false)
     },
+    choseLi(item) {
+      this.$Helper.emitAction('choseSelect', item)
+    },
   },
   created() {
+    this.$Helper.ajax({
+      url: 'WeOpen.ConsultClassList',
+      urlType: 'bbs',
+      method: 'GET',
+    }).then(
+      ({data}) => {
+        this.classIdList = data.data
+      },
+    )
   },
 }
 </script>
 
 <style lang="less" scoped>
   @import url('../../theme/index.less');
-  .layer{
-    background: rgba(0,0,0,.4);
+  .container{
+    .layer{
+      background: rgba(0,0,0,0.3)
+    }
     ul{
+      z-index: 110;
       width: 70vw;
       margin:0 auto;
       position: absolute;
       left:0;
       right:0;
-      bottom:12vh;
+      bottom: -50vh;
+      opacity: 0.3;
       background: white;
       border-radius: 1.5vw;
       overflow: hidden;
+      transition: all 400ms cubic-bezier(.5, 0, .1, 1);
+      &.active{
+        bottom: 8vh;
+        opacity: 1;
+      }
       li{
         height: 7vh;
         border-bottom: 1px solid #f1f1f1;
@@ -68,17 +88,13 @@ export default {
           background: @activeColor;
           color: white;
         }
+        &.cancel{
+          border: none;
+          img{
+            width:4vh;
+          }
+        }
       }
-    }
-    .cancel{
-      position: absolute;
-      left:0;
-      right:0;
-      bottom:4vh;
-      img{
-        width:4.5vh;
-      }
-      // background: white;
     }
   }
   .half-x-line{

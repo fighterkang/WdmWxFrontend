@@ -30,7 +30,7 @@ export default {
 <style lang="less" scoped>
 @import "../../theme/index.less";
 .container {
-  background: rgba(0,0,0,.1);
+  background: rgba(0,0,0,0);
   transition: all .2s linear;
   pointer-events: none;
   text-align: center;
@@ -38,19 +38,15 @@ export default {
 }
 
 .toast-container{
-  background-color:@activeFontColor;
+  background-color: rgba(0,0,0,0.8);
   color:white;
-  height:8vh;
-  border-radius: 8vh;
-  font-size: 4.5vw;
+  font-size: 4vw;
   max-width: 75vw;
   text-align: center;
   margin:auto;
-  margin-top:10vh;
-  padding:0 5vw;
-}
-.toast-container.large{
-  height:10vh;
-  border-radius:10vh;
+  margin-top:25vh;
+  padding:2vw;
+  border-radius: 0.5vw;
+  // line-height: 1.5;
 }
 </style>

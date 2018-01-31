@@ -2,6 +2,7 @@ var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -66,6 +67,10 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
+      },
+      {
+        test: /\.(less|scss|sass|css)$/,  // pack sass and css files
+        loader: ExtractTextPlugin.extract({fallback: "style-loader", use: "css-loader!postcss-loader!sass-loader"}),
       }
     ]
   }

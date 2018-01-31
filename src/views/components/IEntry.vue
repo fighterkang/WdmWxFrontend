@@ -1,7 +1,8 @@
 <template lang="html">
-  <div class="container" @click.self="hideEntry" v-show="entryData.show">
-    <div class="e-container">
-      <h5 class="box box-item">评论</h5>
+  <div class="container">
+    <div class="layer" @click.self="hideEntry" v-show="entryData.show"/>
+    <div class="e-container" :class="{ active: entryData.show }">
+      <!-- <h5 class="box box-item">评论</h5> -->
       <div class="input-bac"><textarea id="Iinput" placeholder="说两句，又不要钱~" class="i-input" type="text" ref="inputText" v-model="content"></textarea></div>
       <div class="box box-item e-btn-container">
         <!-- <div class="e-btn box box-item" @click="hideEntry">
@@ -42,7 +43,7 @@ export default {
   methods: {
     hideEntry() {
       this.content = null
-      this.$store.dispatch('ToggleEntry', {show: false, titleid: null})
+      this.$store.dispatch('ToggleEntry', {show: false, titleid: null, userId: null})
     },
     submit() {
       if (!this.content) {
@@ -53,27 +54,32 @@ export default {
         return
       }
       this.$Helper.ajax({
-        url: 'Open.Comment',
+        url: 'WeConsult.InsertComment',
+        method: 'GET',
+        urlType: 'bbs',
         params: {
-          microblog_id: this.entryData.titleid,
-          content: this.content,
-          isVoice: 1,
+          comment: this.content,
+          type: 1,
+          fid: this.entryData.titleid,
+          pid: this.entryData.userId,
         },
-        success: ({code, context}) => {
-          if (code === 1) {
-            context = '评论成功'
-            this.$Helper.emitAction('addComment', {
-              titleid: this.entryData.titleid,
-            })
-            this.$store.dispatch('addCommentCount', {titleid: this.entryData.titleid, type: this.entryData.type})
-          }
+      }).then(
+        ({data}) => {
+          let {context} = data
           this.$Helper.message.toast({
             text: context,
             long: 2000,
           })
-          this.hideEntry()
+          this.$Helper.emitAction('commentSuccess')
+          setTimeout(() => this.hideEntry(), 400)
         },
-      })
+        () => {
+          this.$Helper.message.toast({
+            text: '评论失败',
+            long: 2000,
+          })
+        }
+      )
     },
   },
   mounted() {
@@ -89,33 +95,38 @@ export default {
 <style lang="less" scoped>
 @import '../../theme/index.less';
 .container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  top:0;
-  background: rgba(0,0,0,.1)
+}
+.layer{
+  background: rgba(0,0,0,0.1)
 }
 .e-container {
   position: absolute;
-  bottom: 0;
+  bottom: -72vw;
   left: 0;
   right: 0;
   background: white; // transition: all .2s linear;
   padding-bottom: 3vh;
   text-align: center;
-  box-shadow: 0 -1px 6px #ddd;
+  // box-shadow: 0 -1px 6px #ddd;
   height:72vw;
+  padding-top:7vw;
+  z-index: 110;
+  transition: all 0.4s;
+  opacity: 0.5;
   h5 {
     height: 8vw;
     padding-left: 5vw;
     padding-top:5vw;
     font-size: 4.4vw;
   }
+  &.active{
+    bottom: 0;
+    opacity: 1;
+  }
 }
 .input-bac{
   width: 90%;
-  height: 70%;
+  height: 80%;
   margin: auto;
   padding-top:7.5%;
   background-image: url('../../../static/icon/ientry.png'); 

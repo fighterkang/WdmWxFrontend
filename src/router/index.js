@@ -11,6 +11,9 @@ let pageTitleConfig = {
   'Collect': '收藏',
   'Home': '家园共建',
   'Detail': '帖子',
+  'PostDetail': '帖子详情',
+  'Login': '登录',
+  'Share': '注册',
 }
 let route = []
 const RouterFile = Helper.requireAll(require.context(`../views/pages`, true, /\.vue$/))

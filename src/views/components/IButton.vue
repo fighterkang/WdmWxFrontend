@@ -30,10 +30,10 @@ export default {
 <style lang="less" scoped>
 @import '../../theme/index.less';
 .btn {
-  height: 10vw;
-  border-radius: 10vw;
-  padding: 0 6vw;
-  font-size: 4vw;
+  height: 9vw;
+  border-radius: 9vw;
+  padding: 0 5vw;
+  font-size: 3.7vw;
   border: 1px solid @activeFontColor;
   color: @activeFontColor;
   position: relative;
