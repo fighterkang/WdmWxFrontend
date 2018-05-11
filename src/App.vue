@@ -5,7 +5,7 @@
     </transition>
     <IToast/>
     <IEntry/>
-    <IMenu/>
+    <!-- <IMenu/> -->
     <IBottomSelect/>
     <ILoading/>
     <!--<audio  name="media" loop="loop" id="bg_music"><source src="" type="audio/mpeg"></audio>-->
@@ -17,7 +17,7 @@ import IBottomSelect from './views/components/IBottomSelect'
 import IToast from './views/components/IToast'
 import IEntry from './views/components/IEntry'
 import IPrompt from './views/components/IPrompt'
-import IMenu from './views/components/IMenu'
+// import IMenu from './views/components/IMenu'
 import ILoading from './views/components/ILoading'
 import { mapState } from 'vuex'
 export default {
@@ -26,7 +26,7 @@ export default {
     IToast,
     IEntry,
     IPrompt,
-    IMenu,
+    // IMenu,
     IBottomSelect,
     ILoading,
   },
@@ -42,7 +42,8 @@ export default {
       let toDeep = this.$Helper.getRouteIndex(to.name)
       let fromDeep = this.$Helper.getRouteIndex(from.name)
       this.transitionName = toDeep > fromDeep ? 'slide-left' : (toDeep < fromDeep ? 'slide-right' : 'fade')
-      // this.testLogin(to.name)
+      // reset page share
+      if (['Login', 'Share', 'PostDetail', 'ShareActivity', 'ShareLesson'].indexOf(to.name) === -1) this.loadWx()
     },
   },
   computed: {
@@ -54,16 +55,28 @@ export default {
     },
   },
   created() {
-    // this.$Helper.clearCookie()
-    // clear all cache
-    // if (!this.$Helper.isTest()) this.$Helper.clearCookie()
     // judge is pc or phone
     this.$Helper.judgeDevice()
     // test basic cookie
     let basicCookie = JSON.parse(this.$Helper.getCookie('basic') || '{}')
     this.$Helper.setCookie('basic', basicCookie)
+    // load wx
+    if (['PostDetail', 'ShareActivity', 'ShareLesson'].indexOf(this.$route.name) === -1) this.loadWx()
   },
-  methods: {},
+  methods: {
+    loadWx() {
+      // load wx
+      this.$Helper.loadWx().then(
+        () => {
+          console.log('success')
+          this.$Helper.resetWxShare({title: '显百教育', desc: '让孩子随时随地享受优质的教育资源和服务', link: 'http://abc.cnjczh.com/phone', imgUrl: 'http://img.cnjczh.com/post_94_1522400716391'})
+        },
+        () => {
+          console.log('error')
+        }
+      )
+    },
+  },
   beforeDestroy() {
     console.log('KO')
     this.$Helper.clearCookie()
@@ -100,6 +113,15 @@ li {
 a {
   text-decoration: none;
 }
+
+// @font-face {
+//   font-family: 'iconfont';  /* project id 516840 */
+//   src: url('//at.alicdn.com/t/font_516840_97f9tojt8ajrlik9.eot');
+//   src: url('//at.alicdn.com/t/font_516840_97f9tojt8ajrlik9.eot?#iefix') format('embedded-opentype'),
+//   url('//at.alicdn.com/t/font_516840_97f9tojt8ajrlik9.woff') format('woff'),
+//   url('//at.alicdn.com/t/font_516840_97f9tojt8ajrlik9.ttf') format('truetype'),
+//   url('//at.alicdn.com/t/font_516840_97f9tojt8ajrlik9.svg#iconfont') format('svg');
+// }
 
 @font-face {
   font-family: 'iconfont';  /* project id 516840 */
@@ -585,6 +607,20 @@ input, textarea{
     -webkit-transform-origin: 0 0;
     -webkit-transform: scale(1, 0.5);
     z-index: 2;
+  }
+}
+
+
+.consultDetail {
+  color: #2f2f2f;
+  word-break: break-word!important;
+  word-break: break-all;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.7;
+  // overflow: hidden;
+  img{
+    width: 90vw !important;
   }
 }
 

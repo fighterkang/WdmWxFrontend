@@ -6,37 +6,41 @@
         <div class="box box-item">
           <i class="iconfont">&#xe6ce;</i>
         </div>
-        <input type="text" v-model="rigster.phone" @focus="focus" @blur="blur" placeholder="请输入手机号"/>
+        <Iinput v-model="rigster.phone" inputType="text" placeholder="请输入手机号" :fixHeight="true" container="shareContainer"/>
       </li>
       <li>
         <div class="box box-item">
           <i class="iconfont">&#xe633;</i>
         </div>
-        <input type="password" v-model="rigster.pwd1" @focus="focus" @blur="blur"  placeholder="请输入密码"/>
+        <Iinput v-model="rigster.pwd1" inputType="password" placeholder="请输入密码" :fixHeight="true" container="shareContainer"/>
       </li>
       <li>
         <div class="box box-item">
           <i class="iconfont">&#xe63d;</i>
         </div>
-        <input type="password" v-model="rigster.pwd2" @focus="focus" @blur="blur"  placeholder="请确认密码"/>
+        <Iinput v-model="rigster.pwd2" inputType="password" placeholder="请确认密码" :fixHeight="true" container="shareContainer"/>
       </li>
       <li>
         <div class="box box-item">
           <i class="iconfont">&#xe606;</i>
         </div>
-        <input type="text" v-model="rigster.code" @focus="focus" @blur="blur"  placeholder="请输入验证码"/>
+        <Iinput v-model="rigster.code" inputType="text" placeholder="请输入验证码" :fixHeight="true" container="shareContainer"/>
         <div class="box box-item btn" @click="getCode">
           {{ isCodeWaiting ? `${ codeLeftSecond }s` : '发送' }}
         </div>
       </li>
     </ul>
+    <div class="box box-y-center box-x-right login-btn" @click="goToLogin">已有账号？点我登录</div>
     <div class="btn box box-item" @click="rigsterFn">立即注册</div>
   </div>
 </template>
 <script>
+import Iinput from '../components/Iinput'
 import md5 from 'js-md5'
 export default {
-  components: {},
+  components: {
+    Iinput,
+  },
   data() {
     return {
       urlParams: {
@@ -63,7 +67,7 @@ export default {
   },
   computed: {
     bacImage() {
-      return this.levelImage[this.urlParams.level] || 'static/pic_erji.png'
+      return this.levelImage[this.urlParams.level]
     },
     testLogin() {
       return this.$Helper.testParamsComplete({params: this.login})
@@ -74,6 +78,9 @@ export default {
   },
   watch: {},
   methods: {
+    goToLogin() {
+      this.$Helper.jumpPage({ name: 'Login' }, this)
+    },
     rigsterFn() {
       if (this.testRigister.length > 0) {
         let config = {
@@ -94,7 +101,7 @@ export default {
         })
         return
       }
-      if (!this.rigster.phone || !(/^1[3|4|5|8][0-9]\d{4,8}$/.test(this.rigster.phone))) {
+      if (!this.rigster.phone || this.rigster.phone.toString().length !== 11) {
         this.$message({
           type: 'warning',
           message: '请输入一个正确的手机号',
@@ -112,6 +119,7 @@ export default {
           pwd2: undefined,
           pid: pid || 0,
           fid: fid || 0,
+          level: this.urlParams.level,
         },
       }).then(
         () => {
@@ -120,17 +128,15 @@ export default {
             password: this.rigster.pwd1,
             category: 1,
           }
-          if (this.urlParams.type === 'download') {
-            setTimeout(() => this.$Helper.jumpPage('Download', this), 600)
-          } else {
-            this.$message({
-              type: 'success',
-              message: '注册成功，正在登录',
-            })
-            setTimeout(() => {
-              this.loginFn()
-            }, 1000)
-          }
+          setTimeout(() => this.$Helper.jumpPage('Download', this), 600)
+          // if (this.urlParams.type === 'download') {
+          //   setTimeout(() => this.$Helper.jumpPage('Download', this), 600)
+          // } else {
+          //   this.$Helper.message.toast({ text: '注册成功，正在登录', long: 2000 })
+          //   setTimeout(() => {
+          //     this.loginFn()
+          //   }, 1000)
+          // }
         },
         () => {
           this.$message({
@@ -171,7 +177,7 @@ export default {
     },
     getCode() {
       // judge have a right phone number
-      if (!this.rigster.phone || !(/^1[3|4|5|8][0-9]\d{4,8}$/.test(this.rigster.phone))) {
+      if (!this.rigster.phone || this.rigster.phone.toString().length !== 11) {
         this.$message({
           type: 'warning',
           message: '请输入一个正确的手机号',
@@ -231,8 +237,7 @@ export default {
   },
   created() {
     // get params from url
-    this.urlParams = this.$Helper.getUrlParams() || {}
-    console.log(this.urlParams)
+    this.urlParams = Object.assign(this.urlParams, this.$Helper.getUrlParams() || {}, this.$route.params)
     this.$message = ({ message }) => {
       this.$Helper.message.toast({
         text: message,
@@ -256,7 +261,7 @@ export default {
     padding-top:70vw;
     &>img{
       position: absolute;
-      top:0;
+      top:-4vh;
       left:0;
       right:0;
       width: 100%;
@@ -264,8 +269,8 @@ export default {
     &>ul{
       padding:0 6vw;
       li{
-        height: 12.5vw;
-        margin-top: 3.2vw;
+        height: 12vw;
+        margin-bottom: 3vw;
         background: white;
         position: relative;
         div{
@@ -278,10 +283,10 @@ export default {
           &.btn{
             left: auto;
             right: 1vw;
-            top: 1vw;
+            top: 1.2vw;
             bottom: 1vw;
-            border-radius: 10.5vw;
-            height: 10.5vw;
+            border-radius: 10vw;
+            height: 10vw;
             background: #f1d059;
             width: 20vw;
             color: white;
@@ -306,6 +311,12 @@ export default {
         }
       }
     }
+    &>.login-btn{
+      font-weight: 600;
+      color: #999;
+      font-size: 3vw;
+      padding:0 6vw;
+    }
     &>.btn{
       height: 12vw;
       width: 46vw;
@@ -313,7 +324,7 @@ export default {
       font-weight: 600;
       font-size: 4.8vw;
       background: #f1d059;
-      margin: 12vw auto;
+      margin: 6vw auto;
     }
   }
 </style>

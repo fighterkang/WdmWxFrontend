@@ -5,7 +5,7 @@ export default {
     'Forum', 'Login', 'Share', 'Download',
   ],
   '10': [
-    'Search', 'Post', 'Published', 'Reply', 'Collect', 'Home',
+    'Search', 'Post', 'Published', 'Reply', 'Collect', 'Home', 'AllClass',
   ],
   '100': [
     'Detail', 'PostDetail',

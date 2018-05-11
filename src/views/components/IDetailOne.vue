@@ -2,7 +2,7 @@
   <div class="s-container">
     <div class="head box">
       <div class="box box-y-center">
-        <img :src="basicData.photo" alt="photo"> 
+        <img :src="basicData.photo || 'http://ozjjwh8gb.bkt.clouddn.com/180.png'" alt="photo"> 
         <span class="name">{{ basicData.nickName }}</span>
         {{ $Helper.formatTime(basicData.createTime) }}
       </div>

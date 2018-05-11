@@ -2,9 +2,11 @@
   <div class="container" @click="hide">
     <div class="layer" v-if="showBottomSelect"/>
     <ul :class="{ active: showBottomSelect }">
-      <li class="box box-item" v-for="(item, key) in classIdList" :key="key" @click="choseLi(item)">
-        {{ item.consultClassName }}
-      </li>
+      <div class="scroll-ul" ref="scroll_ul">
+        <li class="box box-item" v-for="(item, key) in classIdList" :key="key" @click="choseLi(item)">
+          {{ item.consultClassName }}
+        </li>
+      </div>
       <li class="box box-item cancel active">
         <img src="static/icon/cancel.png">
       </li>
@@ -49,6 +51,9 @@ export default {
       },
     )
   },
+  mounted() {
+    this.$Helper.overScroll(this.$refs.scroll_ul)
+  },
 }
 </script>
 
@@ -65,15 +70,20 @@ export default {
       position: absolute;
       left:0;
       right:0;
-      bottom: -50vh;
+      bottom: -100vh;
       opacity: 0.3;
-      background: white;
       border-radius: 1.5vw;
-      overflow: hidden;
       transition: all 400ms cubic-bezier(.5, 0, .1, 1);
+      overflow: hidden;
       &.active{
         bottom: 8vh;
         opacity: 1;
+      }
+      .scroll-ul{
+        max-height:41vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        background: white;
       }
       li{
         height: 7vh;

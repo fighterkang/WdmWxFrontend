@@ -22,47 +22,74 @@ const Helper = {
     }
     return newData
   },
-  ajax({ params = {}, method = 'POST', url, urlType = 'api', success = () => { }, error = () => { } }) {
-    if (!url) throw new Error('Ajax error,without url!')
-    let basicCookie = Helper.getCookie('basic')
-    let accesstoken = _.get(!basicCookie ? {} : JSON.parse(basicCookie), 'token')
-    params = method === 'GET' && accesstoken ? Object.assign(params, { accesstoken }) : params
-    url = apiConfig[urlType] + url
-    // alert('url:' + url + ',params' + JSON.stringify(params))
-    return new Promise((resolve, reject) => {
-      THIS.$http(
-        {
-          method,
-          url,
-          params: method === 'GET' ? params : { accesstoken },
-          body: method === 'POST' ? JSON.stringify(params) : {},
-          // headers: {
-          //   'Content-Type': 'application/json',
-          // },
-        }
-      ).then(
-        ({ bodyText = '{}' }) => {
-          // alert(bodyText)
-          let data = JSON.parse(bodyText)
-          if (data.status === 10005) {
-            Router.push({ name: 'Login' })
-            Helper.message.toast({ text: data.msg || '登录信息有误', long: 2000 })
+  fetch(params) {
+    return Helper.ajax(params)
+  },
+  ajax({ params = {}, method = 'POST', url, urlType = 'api' }) {
+    // Helper.clearCookie()
+    const ajax = () => {
+      if (!url) throw new Error('Ajax error,without url!')
+      let basicCookie = Helper.getCookie('basic')
+      let accesstoken = _.get(!basicCookie ? {} : JSON.parse(basicCookie), 'token')
+      params = method === 'GET' && accesstoken ? Object.assign(params, { accesstoken }) : params
+      url = url.indexOf('http') === -1 ? apiConfig[urlType] + url : url
+      // alert('url:' + url + ',params' + JSON.stringify(params))
+      return new Promise((resolve, reject) => {
+        THIS.$http(
+          {
+            method,
+            url,
+            params: method === 'GET' ? params : { accesstoken },
+            body: method === 'POST' ? JSON.stringify(params) : {},
+            // headers: {
+            //   'Content-Type': 'application/json',
+            // },
+          }
+        ).then(
+          ({ bodyText = '{}' }) => {
+            let data = JSON.parse(bodyText)
+            if (data.status === 10005) {
+              Router.push({ name: 'Login' })
+              Helper.message.toast({ text: data.msg || '登录信息有误', long: 2000 })
+            } else {
+              resolve(data)
+            }
+          },
+          () => {
+            Helper.message.toast({ text: '网络繁忙，请稍候再试', long: 2000 })
+            reject()
+          },
+        )
+      })
+    }
+    // get cache
+    let isOpen = JSON.parse(Helper.getCookie('isOpen') || '{}').isOpen
+    if (!isOpen) {
+      return THIS.$http({
+        method: 'GET',
+        url: 'http://api.wevsport.com/?service=WeOpen.GetCode',
+      }).then(
+        ({data}) => {
+          if (data.data) {
+            Helper.setCookie('isOpen', { isOpen: data.data })
+            return ajax()
           } else {
-            resolve(data)
+            this.$message('网络繁忙，请稍候再试')
           }
         },
         () => {
-          Helper.message.toast({ text: '网络繁忙，请稍候再试', long: 2000 })
-          reject()
-        },
+          this.$message('网络繁忙，请稍候再试')
+        }
       )
-    })
+    } else {
+      return ajax()
+    }
   },
   getCookie(key) {
     return Cookie.get(key)
   },
   setCookie(key, data) {
-    Cookie.set(key, JSON.stringify(data), { expires: 0.04 })
+    Cookie.set(key, JSON.stringify(data), { expires: 0.0004 })
     if (key === 'basic') {
       dispatch('basic/setLoginData', data)
     }
@@ -202,66 +229,126 @@ const Helper = {
     }
     return key
   },
-  loadWx(_fun) {
-    let basic = Helper.getUrlParams()
-    Helper.ajax({
-      params: {
-        PublicId: _.get(basic, 'PublicId'),
-        Url: window.location.href,
-      },
-      url: 'Wx.MakeJsToken',
-      success: ({ data }) => {
-        let config = {
-          debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-          appId: data.appid, // 必填，公众号的唯一标识
-          timestamp: data.timestamp, // 必填，生成签名的时间戳
-          nonceStr: data.noncestr, // 必填，生成签名的随机串
-          signature: data.signature, // 必填，签名，见附录1
-          jsApiList: [
-            'onMenuShareTimeline',    // 分享到朋友圈
-            'onMenuShareAppMessage',  // 分享给朋友
-            'onMenuShareQQ',        // 分享给QQ
-            'onMenuShareWeibo',     // 分享给微博
-            'onMenuShareQZone',     // 分享给空间
-            'startRecord',      // 开始录音
-            'stopRecord',   // 结束录音
-            'onVoiceRecordEndplayVoice',
-            'pauseVoice',
-            'stopVoice',
-            'onVoicePlayEnd',
-            'uploadVoice',
-            'downloadVoice',
-            'chooseImage',
-            'previewImage',
-            'uploadImage',
-            'downloadImage',
-            'getLocalImgData ',
-            'translateVoice',
-            'getNetworkType',
-            'openLocation',
-            'getLocation',
-            'hideOptionMenu',
-            'showOptionMenu',
-            'hideMenuItems',
-            'showMenuItems',
-            'hideAllNonBaseMenuItem',
-            'showAllNonBaseMenuItem',
-            'closeWindow',
-            'scanQRCode',
-            'chooseWXPay',
-            'openProductSpecificView',
-            'addCard',
-            'chooseCard',
-            'openCard',
-          ], // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+  loadWx() {
+    return new Promise((resolve, reject) => {
+      Helper.ajax({
+        params: {
+          url: window.location.href,
+        },
+        method: 'GET',
+        url: 'open/wxdev/myshare',
+      }).then(
+        ({data}) => {
+          let config = {
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: 'wx94f7ad3ab18a5f83', // 必填，公众号的唯一标识
+            timestamp: data.timestamp, // 必填，生成签名的时间戳
+            nonceStr: data.nonceStr, // 必填，生成签名的随机串
+            signature: data.signature, // 必填，签名，见附录1
+            jsApiList: [
+              'hideMenuItems',
+              'onMenuShareTimeline',    // 分享到朋友圈
+              'onMenuShareAppMessage',  // 分享给朋友
+              'onMenuShareQQ',        // 分享给QQ
+              'onMenuShareWeibo',     // 分享给微博
+              'onMenuShareQZone',     // 分享给空间
+              'startRecord',      // 开始录音
+              'stopRecord',   // 结束录音
+              'onVoiceRecordEndplayVoice',
+              'pauseVoice',
+              'stopVoice',
+              'onVoicePlayEnd',
+              'uploadVoice',
+              'downloadVoice',
+              'chooseImage',
+              'previewImage',
+              'uploadImage',
+              'downloadImage',
+              'getLocalImgData ',
+              'translateVoice',
+              'getNetworkType',
+              'openLocation',
+              'getLocation',
+              'hideOptionMenu',
+              'showOptionMenu',
+              'showMenuItems',
+              'hideAllNonBaseMenuItem',
+              'showAllNonBaseMenuItem',
+              'closeWindow',
+              'scanQRCode',
+              'chooseWXPay',
+              'openProductSpecificView',
+              'addCard',
+              'chooseCard',
+              'openCard',
+            ], // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+          }
+          wx.config(config)
+          wx.ready(() => {
+            wx.hideMenuItems({
+              menuList: [
+                'menuItem:share:facebook',
+                'menuItem:share:QZone',
+                // 'menuItem:copyUrl',
+                'menuItem:delete',
+                'menuItem:editTag',
+                'menuItem:originPage',
+                'menuItem:readMode',
+                'menuItem:openWithQQBrowser',
+                'menuItem:openWithSafari',
+                'menuItem:share:email',
+              ],
+            })
+            resolve()
+          })
+          wx.error((err) => {
+            reject(err)
+          })
+        },
+        (err) => {
+          reject(err)
         }
-        wx.config(config)
-        wx.ready(() => {
-          // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
-          console.log('success')
-          if (_fun) _fun()
-        })
-      },
+      )
+    })
+  },
+  resetWxShare({title, desc, link, imgUrl = ''}) {
+    wx.ready(() => {
+      // 分享到朋友圈
+      wx.onMenuShareTimeline({
+        title: title.replace(/<[^>]+>/g, ''), // 分享标题
+        link, // 分享链接
+        imgUrl, // 分享图标
+        success: () => {
+        },
+        cancel: () => {
+        },
+      })
+      // 分享给朋友
+      wx.onMenuShareAppMessage({
+        title: title.replace(/<[^>]+>/g, ''), // 分享标题
+        desc: desc.replace(/<[^>]+>/g, ''), // 分享描述
+        link, // 分享链接
+        imgUrl, // 分享图标
+        success: () => {
+            // 用户确认分享后执行的回调函数
+        },
+        cancel: () => {
+            // 用户取消分享后执行的回调函数
+        },
+      })
+      // 分享给QQ
+      wx.onMenuShareQQ({
+        title: title.replace(/<[^>]+>/g, ''), // 分享标题
+        desc: desc.replace(/<[^>]+>/g, ''), // 分享描述
+        link, // 分享链接
+        imgUrl, // 分享图标
+        success: () => {
+            // 用户确认分享后执行的回调函数
+        },
+        cancel: () => {
+            // 用户取消分享后执行的回调函数
+        },
+      })
     })
   },
   overScroll(el) {
@@ -298,6 +385,21 @@ const Helper = {
       returnData = time
     }
     return returnData
+  },
+  formatDateTime(inputTime) {
+    var date = new Date(inputTime)
+    var y = date.getFullYear()
+    var m = date.getMonth() + 1
+    m = m < 10 ? ('0' + m) : m
+    var d = date.getDate()
+    d = d < 10 ? ('0' + d) : d
+    var h = date.getHours()
+    h = h < 10 ? ('0' + h) : h
+    var minute = date.getMinutes()
+    var second = date.getSeconds()
+    minute = minute < 10 ? ('0' + minute) : minute
+    second = second < 10 ? ('0' + second) : second
+    return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second
   },
   isAndroid() {
     let u = navigator.userAgent

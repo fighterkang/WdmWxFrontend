@@ -1,12 +1,12 @@
 <template lang="html">
-  <div class="container" ref="loginContainer">
+  <div class="container" ref="loginContainer" id="login_con">
     <ul class="login">
       <li>
-        <input v-model="login.username" @focus="focus" @blur="blur" class="Iinput" type="text" placeholder="手机号或邮箱"/>
+        <Iinput :classList="{ 'Iinput': true }" v-model="login.username" inputType="text" placeholder="手机号或邮箱" :fixHeight="true" container="login_con"/>
         <i class="iconfont">&#xe629;</i>
       </li>
       <li>
-        <input v-model="login.password" @focus="focus" @blur="blur" class="Iinput password" type="password" placeholder="密码"/>
+        <Iinput :classList="{ 'Iinput': true, 'password': true}" v-model="login.password" inputType="password" placeholder="密码" :fixHeight="true" container="login_con"/>
         <i class="iconfont">&#xe633;</i>
       </li>
     </ul>
@@ -18,11 +18,13 @@
 </template>
 <script>
 import IButton from '../components/IButton'
+import Iinput from '../components/Iinput'
 import { mapState } from 'vuex'
 import md5 from 'js-md5'
 export default {
   components: {
     IButton,
+    Iinput,
   },
   data() {
     return {
@@ -64,7 +66,7 @@ export default {
           // save to cache
           this.$Helper.setCookie('basic', data)
           // jump to forum page
-          setTimeout(() => this.$Helper.jumpPage({ name: 'Forum' }, this), 600)
+          setTimeout(() => this.$Helper.jumpPage({ name: 'Download' }, this), 600)
         }
         this.$Helper.message.toast({
           text: message,
@@ -74,25 +76,6 @@ export default {
     },
     goToRegister() {
       this.$Helper.jumpPage({ name: 'Share' }, this)
-    },
-    focus(e) {
-      if (this.$Helper.isAndroid()) {
-        let top = e.target.offsetTop > this.pageHeight * 0.4 ? this.pageHeight * 0.4 : e.target.offsetTop
-        document.getElementById('loginContainer').style.height = this.pageHeight + 'px'
-        document.getElementById('loginContainer').style.top = -top + 'px'
-        setTimeout(() => {
-          let blur = () => {
-            e.target.blur()
-            window.removeEventListener('resize', blur, false)
-          }
-          window.addEventListener('resize', blur, false)
-        }, 1000)
-      }
-    },
-    blur() {
-      if (this.$Helper.isAndroid()) {
-        document.getElementById('loginContainer').style.top = 0
-      }
     },
   },
   created() {
@@ -113,7 +96,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import url('../../theme/index.less');
+  @import '../../theme/index.less';
   .container {
     padding: 25vw 5vw;
     ul{

@@ -36,7 +36,7 @@ export default {
   watch: {},
   methods: {
     getDetail() {
-      Router.push({ name: 'PostDetail', params: { basicData: this.basicData } })
+      Router.push({ name: 'PostDetail', params: { basicData: this.basicData }, query: { id: this.basicData.id } })
     },
   },
   created() {},

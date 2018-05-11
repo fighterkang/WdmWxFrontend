@@ -3,10 +3,10 @@
     <div class="content">
       <h1>{{ basicData.consultName }}</h1>
       <div class="box">
-        <img :src="basicData.photo" v-if="basicData.photo" alt="photo">
+        <img :src="basicData.photo || 'http://ozjjwh8gb.bkt.clouddn.com/180.png'" alt="photo">
         <div>
           <div class="auther box box-y-center">
-            <span class="name">{{ basicData.nickName }}</span>
+            <span class="name">{{ basicData.nickname || '显百'}}</span>
             <span class="time">{{ $Helper.formatTime(basicData.createTime) }}</span>
           </div>
           <div class="info">
@@ -16,7 +16,7 @@
         </div>
       </div>
       <img :src="basicData.consultImg" v-if="basicData.consultImg" alt="consultImg"/>
-      <p v-html="basicData.consultDetail" />
+      <div class="consultDetail" v-html="basicData.consultDetail" />
     </div>
     <div class="commentList" v-if="commentList && commentList.length!==0">
       <IDetailOne v-for="(item, key) in commentList" :basicData="item" :index="key" :key="key"/>
@@ -43,7 +43,9 @@ export default {
   },
   data() {
     return {
-      basicData: {},
+      basicData: {
+        createTime: '',
+      },
       fetched: false,
       commentList: [],
       page: 1,
@@ -89,30 +91,64 @@ export default {
       if (!this.fetched) this.getCommentList()
     },
     openEntry() {
+      if (this.$Helper.getUrlParamsByKey('type') === 'download') {
+        this.$Helper.jumpPage('Download', this)
+        return
+      }
       this.$store.dispatch('ToggleEntry', {show: true, titleid: this.basicData.id})
+    },
+    loadWx() {
+      // load wx
+      this.$Helper.loadWx().then(
+        () => {
+          console.log('success')
+          let link = window.location.href
+          // if (link.indexOf('?id') === -1) {
+          //   link += `?id=${this.basicData.id}&type=download`
+          // } else {
+          //   link += `&type=download`
+          // }
+          this.$Helper.resetWxShare({title: this.basicData.consultName, desc: this.basicData.consultDetail, link, imgUrl: this.basicData.consultImg || 'http://img.cnjczh.com/post_94_1522400716391'})
+        },
+        () => {
+          console.log('error')
+        }
+      )
     },
   },
   created() {
-    this.basicData = this.$route.params.basicData || JSON.parse(this.$Helper.getCookie('postDetail') || '{}')
-    // save to cache
-    this.$Helper.setCookie('postDetail', this.basicData)
-    // get comment list
-    this.getCommentList()
-    this.$Helper.onAction('commentSuccess', () => {
-      this.page = 1
-      this.comment = null
-      this.getCommentList(true)
-    })
-    this.$Helper.onAction('addLike', key => {
-      this.$Helper.message.toast({
-        text: '已点赞',
-        long: 2000,
+    let basicData = this.$route.params.basicData || JSON.parse(this.$Helper.getCookie('postDetail') || '{}')
+    this.$Helper.ajax({
+      url: 'WeOpen.ConsultDetail',
+      method: 'GET',
+      urlType: 'bbs',
+      params: {
+        id: this.$Helper.getUrlParamsByKey('id') || basicData.id,
+        type: 1,
+      },
+    }).then((data) => {
+      this.basicData = data.data.data
+      // save to cache
+      this.$Helper.setCookie('postDetail', this.basicData)
+      // get comment list
+      this.getCommentList()
+      this.$Helper.onAction('commentSuccess', () => {
+        this.page = 1
+        this.comment = null
+        this.getCommentList(true)
       })
-      this.commentList.splice(key, 1, {
-        ...this.commentList[key],
-        haslike: 1,
-        likeNum: parseInt(this.commentList[key].likeNum) + 1,
+      this.$Helper.onAction('addLike', key => {
+        this.$Helper.message.toast({
+          text: '已点赞',
+          long: 2000,
+        })
+        this.commentList.splice(key, 1, {
+          ...this.commentList[key],
+          haslike: 1,
+          likeNum: parseInt(this.commentList[key].likeNum) + 1,
+        })
       })
+      this.loadWx()
     })
   },
   mounted() {},
@@ -132,8 +168,8 @@ export default {
       // border: 1px solid red;
       &>h1{
         padding:2vh 0;
-        font-size: 8vw;
-        font-weight: 700;
+        font-size: 5vw;
+        font-weight: 500;
         line-height: 1.3;
         color: #333333;
       }
@@ -150,7 +186,7 @@ export default {
             padding-top:0.1vw;
             .name{
               margin-right: 10px;
-              font-size: 3.5vw;
+              font-size: 3.3vw;
               color: @fontColor2;
             }
             .time{
@@ -161,10 +197,10 @@ export default {
           &>.info{
             margin-top:0.5vh;
             font-size: 3vw;
-            color: #aaa;
+            color: #888;
             i{
               font-size: 3vw;
-              color: #b4b4b4;
+              color: #888;
               &:nth-child(1){
                 margin: 0;
               }
@@ -177,14 +213,6 @@ export default {
         width: 100%;
         margin-top: 20px;
         margin-bottom: 50px;
-      }
-      &>p {
-        color: #2f2f2f;
-        word-break: break-word!important;
-        word-break: break-all;
-        font-size: 16px;
-        font-weight: 400;
-        line-height: 1.7;
       }
     }
     &>.commentList{
@@ -202,7 +230,7 @@ export default {
       }
       p{
         color:@basicFontColor;
-        font-size:4vw;
+        font-size:3.5vw;
       }
     }
     &>.comment-btn-container{
@@ -210,7 +238,7 @@ export default {
       bottom: 0;
       left:0;
       right: 0;
-      height: 7vh;
+      height: 8vh;
       background: white;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
       &>.btn{
@@ -220,7 +248,7 @@ export default {
           // position: relative;
           // top:2px;
         }
-        height: 5vh;
+        height: 5.6vh;
         border-radius: 5vh;
         width: 85vw;
         padding: 0 5vw;

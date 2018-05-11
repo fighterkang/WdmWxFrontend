@@ -1,15 +1,22 @@
 <template lang='html'>
   <IDetailContent class='container' ref="IDetailContent" @scrollToBottom="scrollToBottom" @scrollDestory="scrollDestory">
-    <div class="toper box box-y-center box-x-right" :style="{ backgroundColor: `rgba(255,255,255, ${ToperOpacity})` }">
-      <!-- <img src="static/icon2/ic_more.png" @click="toggleMenuFn"/> -->
-      <img src="static/icon2/ic_submit.png" @click="postFn" style="height:3vh;"/>
+    <div class="toper box box-y-center box-space-bettwen" :style="{ backgroundColor: `rgba(255,255,255, ${ToperOpacity})` }">
+      <img src="static/icon/ic_more.png" @click="showAllClassFn"/>
+      <!-- <img src="static/icon2/ic_submit.png" @click="postFn" style="height:3vh;"/> -->
       <!-- <img src="static/icon2/ic_interfice.png" @click="jumpToSearch"/> -->
     </div>
     <Slider class="slider" :pages='pages' :sliderinit='sliderinit' @slide='slide' @tap='onTap' @init='onInit'>
       <div slot='loading'></div>
     </Slider>
-    <div class="label box box-y-center">
-      <div/>最新帖子
+    <div class="label box">
+      <div class="box box-y-center box-col-flex new">
+        <div/>最新帖子
+      </div>
+      <div class="box box-item publish">
+        <div class="btn box box-item" @click="postFn">
+          发帖子
+        </div>
+      </div>
     </div>
     <div class="list-container">
       <IListOne v-for="(item, key) in newList" :basicData="item" :key="key"/>
@@ -181,18 +188,22 @@ export default {
     },
     firstGetData() {
       // get cookie
-      let { newList, page } = JSON.parse(this.$Helper.getCookie('ForumData') || '{}')
-      let { reset } = this.$route.params
-      if (reset) {
-        newList = []
-        page = 1
-      }
-      this.page = page || 1
-      this.newList = newList || []
-      if (this.newList.length === 0) {
-        this.getNewList()
-      }
+      // let { newList, page } = JSON.parse(this.$Helper.getCookie('ForumData') || '{}')
+      // let { reset } = this.$route.params
+      // if (reset) {
+      //   newList = []
+      //   page = 1
+      // }
+      // this.page = page || 1
+      // this.newList = newList || []
+      // if (this.newList.length === 0) {
+      //   this.getNewList()
+      // }
+      this.getNewList()
       this.getBannerList()
+    },
+    showAllClassFn() {
+      this.$Helper.jumpPage({name: 'AllClass'}, this)
     },
   },
   created() {
@@ -255,11 +266,26 @@ export default {
     padding: 0 3vw;
     font-weight: 500;
     background: white;
-    &>div{
-      height:2vh;
-      width:0.7vh;
-      background: #23ae92;
-      margin-right:1vw;
+    .new{
+      &>div{
+        height:2vh;
+        width:0.7vh;
+        background: #23ae92;
+        margin-right:1vw;
+      }
+    }
+    .publish{
+      width: 15vw;
+      .btn{
+        height: 4.4vh;
+        width: 15vw;
+        border-radius: 4.4vh;
+        line-height: 150%;
+        border: 1px solid #23ae92;
+        font-size: 3.4vw;
+        font-weight: 600;
+        color: #23ae92;
+      }
     }
   }
   .list-container{
