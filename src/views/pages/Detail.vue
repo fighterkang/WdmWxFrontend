@@ -25,13 +25,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  @import url('../../theme/index.less');
   .container{
-    @import url('../../theme/index.less');
     background: @bgColor;
     overflow-x: hidden;
     overflow-y: auto;
-    .btn{
-      margin-right: 2vw;
-    }
   }
 </style>

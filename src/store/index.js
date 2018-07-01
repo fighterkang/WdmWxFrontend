@@ -45,6 +45,10 @@ const store = new Vuex.Store({
     iMenuData: {
       show: false,
     },
+    examHeadInfo: {
+      title: '考试中心',
+      vipTime: 0,
+    },
   },
   actions: {
     ToggleBar({ commit, dispatch }, data) {
