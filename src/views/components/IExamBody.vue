@@ -1,5 +1,10 @@
 <template>
-  <div class="container">123</div>
+  <div class="container">
+    <img :src="initData.ico" class="oImg">
+    <div class="oTitle">
+      {{initData.className}}
+    </div>
+  </div>
 </template>
 <script>
   //  import IDetailOne from '../components/IDetailOne'
@@ -15,14 +20,23 @@
     methods: {},
     created() {},
     mounted() {},
-//    props: ['type', 'data'],
+    props: ['initData'],
   }
 </script>
 <style lang="less" scoped>
-  /*@import url('../../theme/index.less');*/
+  @import url('../../theme/index.less');
   .container{
     background: @bgColor;
     overflow-x: hidden;
     overflow-y: auto;
+    padding: 30*@vh 30*@vh 0 30*@vh;
+    .oImg {
+      width: 100%;
+      border-radius: 20*@vh;
+    }
+    .oTitle {
+      font-size: 28*@vh;
+      margin-top: 20*@vh;
+    }
   }
 </style>

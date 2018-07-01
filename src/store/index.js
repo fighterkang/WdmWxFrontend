@@ -99,6 +99,9 @@ const store = new Vuex.Store({
     ToggleIMenuData({ commit, dispatch }, data) {
       commit('TOGGLEIMENUDATA', data)
     },
+    ChangeExamTitle({ commit, dispatch }, data) {
+      commit('CHNAGEEXAMHEADINFO', data)
+    },
   },
   mutations: {
     TOGGLEBAR(state, data) {
@@ -179,6 +182,9 @@ const store = new Vuex.Store({
     },
     TOGGLEIMENUDATA(state, data) {
       Object.assign(state.iMenuData, data)
+    },
+    CHNAGEEXAMHEADINFO(state, data) {
+      Object.assign(state.examHeadInfo, data)
     },
   },
   modules: {

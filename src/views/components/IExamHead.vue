@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <div class="backFlag"><</div>
-    <div class="examTitle">{{examHeadInfo.title}}</div>
-    <div class="vipInfo">{{examHeadInfo.vipTime || '请充值会员'}}</div>
+    <span class="backFlag" @click="goBack"><</span>
+    <span class="examTitle">{{examHeadInfo.title}}</span>
+    <span class="vipInfo">{{examHeadInfo.vipTime || '会员充值'}}</span>
   </div>
 </template>
 <script>
@@ -17,7 +17,11 @@
       ...mapState(['examHeadInfo']),
     },
     watch: {},
-    methods: {},
+    methods: {
+      goBack() {
+        window.history.go(-1)
+      },
+    },
     created() {},
     mounted() {
       console.log(mapState(['examHeadInfo']))
@@ -34,8 +38,19 @@
     background: #12af92;
     color: #fff;
     padding: 0 30*@vh;
+    display: flex;
+    justify-content: space-between;
     .backFlag {
       font-size: 60*@vh;
+      line-height: 100*@vh;
+      width: 128*@vh;
+    }
+    .examTitle {
+      font-size: 34*@vh;
+      line-height: 100*@vh;
+    }
+    .vipInfo {
+      font-size: 32*@vh;
       line-height: 100*@vh;
     }
   }

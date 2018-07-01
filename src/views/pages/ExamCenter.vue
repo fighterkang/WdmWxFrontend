@@ -1,17 +1,21 @@
 <template>
   <div class="container">
     <IExamHead/>
-    <IExamBody/>
+    <IExamBody v-for="(item, key) in listData" :initData="item" :key="key"/>
   </div>
 </template>
 <script>
   import IExamHead from '../components/IExamHead'
+  import IExamBody from '../components/IExamBody'
   export default {
     components: {
       IExamHead,
+      IExamBody,
     },
     data() {
-      return {}
+      return {
+        listData: [],
+      }
     },
     computed: {},
     watch: {},
@@ -23,21 +27,10 @@
         method: 'GET',
 //        params: { phone: this.rigster.phone },
       }).then(
-        () => {
-          this.$message({
-            type: 'success',
-            message: '验证码发送成功，请注意查收',
-          })
-          this.isCodeWaiting = true
-          this.codeLeftSecond = 60
-          this.beginTimer()
+        (res) => {
+          this.listData = res.data
         },
-        () => {
-          this.$message({
-            type: 'warning',
-            message: '验证码获取失败',
-          })
-        }
+        () => {}
       )
     },
   }
