@@ -45,9 +45,11 @@ const store = new Vuex.Store({
     iMenuData: {
       show: false,
     },
-    examHeadInfo: {
-      title: '考试中心',
-      vipTime: 0,
+    examHeadInfoTitle: '考试中心',
+    examHeadInfoVipTime: 0,
+    currentClass: {
+      ExamClassTwoPId: -1,
+      ExamClassThreePId: -1,
     },
   },
   actions: {
@@ -99,8 +101,14 @@ const store = new Vuex.Store({
     ToggleIMenuData({ commit, dispatch }, data) {
       commit('TOGGLEIMENUDATA', data)
     },
-    ChangeExamTitle({ commit, dispatch }, data) {
-      commit('CHNAGEEXAMHEADINFO', data)
+    ChangeExamInfoTitle({ commit, dispatch }, data) {
+      commit('CHNAGEEXAMHEADTITLE', data)
+    },
+    ChangeExamInfoVipTime({ commit, dispatch }, data) {
+      commit('CHNAGEEXAMHEADVIPTIME', data)
+    },
+    ChangeCurrentClassId({ commit, dispatch }, data) {
+      commit('CHNAGECURRENTCLASSID', data)
     },
   },
   mutations: {
@@ -183,8 +191,14 @@ const store = new Vuex.Store({
     TOGGLEIMENUDATA(state, data) {
       Object.assign(state.iMenuData, data)
     },
-    CHNAGEEXAMHEADINFO(state, data) {
-      Object.assign(state.examHeadInfo, data)
+    CHNAGEEXAMHEADTITLE(state, data) {
+      state.examHeadInfoTitle = data
+    },
+    CHNAGEEXAMHEADVIPTIME(state, data) {
+      Object.assign(state.examHeadInfoVipTime, data)
+    },
+    CHNAGECURRENTCLASSID(state, data) {
+      Object.assign(state.currentClass, data)
     },
   },
   modules: {

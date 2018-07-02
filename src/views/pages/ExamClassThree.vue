@@ -5,8 +5,10 @@
   </div>
 </template>
 <script>
+  import {mapState} from 'vuex'
   import IExamHead from '../components/IExamHead'
   import IExamBody from '../components/IExamBody'
+
   export default {
     components: {
       IExamHead,
@@ -15,30 +17,32 @@
     data() {
       return {
         listData: [],
-        skipUrl: 'ExamClassTwo',
+        skipUrl: 'ExamClassThree',
       }
     },
-    computed: {},
+    computed: {...mapState(['currentClass'])},
     watch: {},
     methods: {},
-    created() {},
+    created() {
+    },
     mounted() {
       this.$Helper.ajax({
-        url: 'open/examCenter/getOneClass',
+        url: 'examCenter/getThirdClass?SecondClassId=' + this.currentClass.ExamClassThreePId,
         method: 'GET',
-//        params: { phone: this.rigster.phone },
       }).then(
         (res) => {
           this.listData = res.data
         },
-        () => {}
+        () => {
+        }
       )
     },
   }
 </script>
-<style lang="less" scoped>
+<style lang="less">
   @import url('../../theme/index.less');
-  .container{
+
+  .container {
     background: @bgColor;
     overflow-x: hidden;
     overflow-y: auto;
