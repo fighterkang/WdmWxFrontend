@@ -40,7 +40,6 @@ export default {
   text-align: center;
   position: fixed;
   top:0;
-  opacity: .3;
   z-index: 1000;
 }
 

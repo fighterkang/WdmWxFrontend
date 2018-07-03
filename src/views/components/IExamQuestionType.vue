@@ -1,5 +1,5 @@
 <template>
-  <div class="container" @click="skipTo">
+  <div class="container" @click="showModel">
     <img :src="initData.ico" class="oImg">
     <span class="oTitle">
       {{initData.className}}
@@ -19,9 +19,14 @@
     watch: {},
     methods: {
       skipTo() {
-        localStorage.setItem('ExamClassThreePId', this.initData.id)
+        localStorage.setItem(this.skipUrl + 'PId', this.initData.id)
         this.$store.dispatch('ChangeExamInfoTitle', this.initData.className)
         this.$Helper.jumpPage({name: this.skipUrl}, this)
+      },
+      showModel() {
+        this.$store.dispatch('toggleQuestionModel', {
+          show: true,
+        })
       },
     },
     created() {

@@ -21,21 +21,18 @@
     <div class="list-container">
       <IListOne v-for="(item, key) in newList" :basicData="item" :key="key"/>
     </div>
-    <IToast/>
   </IDetailContent>
 </template>
 <script>
 import Slider from 'vue-concise-slider'
 import IListOne from '../components/IListOne'
 import IDetailContent from '../components/IDetailContent'
-import IToast from '../components/IToast'
 import { mapState } from 'vuex'
 export default {
   components: {
     Slider,
     IListOne,
     IDetailContent,
-    IToast,
   },
   data() {
     return {

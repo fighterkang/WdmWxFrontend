@@ -1,23 +1,28 @@
 <template>
-  <div class="container">
-    <IExamHead/>
-    <IExamQuestionType v-for="(item, key) in listData" :initData="item" :skipUrl="skipUrl" :key="key"/>
-    <div class="oTest" @click="directTest">直接考试</div>
+  <div class="containerk">
+    <div class="content">
+      <IExamHead/>
+      <IExamQuestionType v-for="(item, key) in listData" :initData="item" :skipUrl="skipUrl" :key="key"/>
+      <div class="oTest" @click="directTest">直接考试</div>
+    </div>
+    <IQuestionModel/>
   </div>
 </template>
 <script>
   import IExamHead from '../components/IExamHead'
   import IExamQuestionType from '../components/IExamQuestionType'
+  import IQuestionModel from '../components/IQuestionModel'
 
   export default {
     components: {
       IExamHead,
       IExamQuestionType,
+      IQuestionModel,
     },
     data() {
       return {
         listData: [],
-        skipUrl: 'ExamClassThree',
+        skipUrl: 'ExamQuestionPage',
         pId: -1,
       }
     },
@@ -25,7 +30,7 @@
     watch: {},
     methods: {
       directTest() {
-        this.$Helper.message.toast({ text: 'token获取失败', long: 2000 })
+        this.$Helper.message.toast({ text: '考试针对题型提交好后不可修改考试时长60分钟', long: 2000 })
       },
     },
     created() {
@@ -48,25 +53,28 @@
 <style lang="less">
   @import url('../../theme/index.less');
 
-  .container {
+  .containerk {
     background: @bgColor;
     overflow-x: hidden;
     overflow-y: auto;
-    position: relative;
     height: 100%;
-    .oTest {
-      position: absolute;
-      width: 630*@vh;
-      height: 100*@vh;
-      background: #12af72;
-      color: #f0f0f0;
-      font-size: 30*@vh;
-      bottom: 30*@vh;
-      border-radius: 50*@vh;
-      text-align: center;
-      line-height: 100*@vh;
-      left: 50%;
-      margin-left: -315*@vh;
+    .content {
+      position: relative;
+      height: 100%;
+      .oTest {
+        position: absolute;
+        width: 630*@vh;
+        height: 100*@vh;
+        background: #12af92;
+        color: #f0f0f0;
+        font-size: 30*@vh;
+        bottom: 30*@vh;
+        border-radius: 50*@vh;
+        text-align: center;
+        line-height: 100*@vh;
+        left: 50%;
+        margin-left: -315*@vh;
+      }
     }
   }
 </style>
