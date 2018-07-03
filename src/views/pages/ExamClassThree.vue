@@ -1,33 +1,39 @@
 <template>
   <div class="container">
     <IExamHead/>
-    <IExamBody v-for="(item, key) in listData" :initData="item" :skipUrl="skipUrl" :key="key"/>
+    <IExamQuestionType v-for="(item, key) in listData" :initData="item" :skipUrl="skipUrl" :key="key"/>
+    <div class="oTest" @click="directTest">直接考试</div>
   </div>
 </template>
 <script>
-  import {mapState} from 'vuex'
   import IExamHead from '../components/IExamHead'
-  import IExamBody from '../components/IExamBody'
+  import IExamQuestionType from '../components/IExamQuestionType'
 
   export default {
     components: {
       IExamHead,
-      IExamBody,
+      IExamQuestionType,
     },
     data() {
       return {
         listData: [],
         skipUrl: 'ExamClassThree',
+        pId: -1,
       }
     },
-    computed: {...mapState(['currentClass'])},
+    computed: {},
     watch: {},
-    methods: {},
+    methods: {
+      directTest() {
+        this.$Helper.message.toast({ text: 'token获取失败', long: 2000 })
+      },
+    },
     created() {
     },
     mounted() {
+      this.pId = parseInt(localStorage.getItem('ExamClassThreePId') || -1)
       this.$Helper.ajax({
-        url: 'examCenter/getThirdClass?SecondClassId=' + this.currentClass.ExamClassThreePId,
+        url: 'examCenter/getThirdClass?SecondClassId=' + this.pId,
         method: 'GET',
       }).then(
         (res) => {
@@ -46,5 +52,21 @@
     background: @bgColor;
     overflow-x: hidden;
     overflow-y: auto;
+    position: relative;
+    height: 100%;
+    .oTest {
+      position: absolute;
+      width: 630*@vh;
+      height: 100*@vh;
+      background: #12af72;
+      color: #f0f0f0;
+      font-size: 30*@vh;
+      bottom: 30*@vh;
+      border-radius: 50*@vh;
+      text-align: center;
+      line-height: 100*@vh;
+      left: 50%;
+      margin-left: -315*@vh;
+    }
   }
 </style>

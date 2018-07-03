@@ -1,9 +1,9 @@
 <template>
   <div class="container" @click="skipTo">
     <img :src="initData.ico" class="oImg">
-    <div class="oTitle">
+    <span class="oTitle">
       {{initData.className}}
-    </div>
+    </span>
   </div>
 </template>
 <script>
@@ -19,7 +19,7 @@
     watch: {},
     methods: {
       skipTo() {
-        localStorage.setItem(this.skipUrl + 'PId', this.initData.id)
+        localStorage.setItem('ExamClassThreePId', this.initData.id)
         this.$store.dispatch('ChangeExamInfoTitle', this.initData.className)
         this.$Helper.jumpPage({name: this.skipUrl}, this)
       },
@@ -37,17 +37,23 @@
   @import url('../../theme/index.less');
 
   .container {
-    background: @bgColor;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 30*@vh 30*@vh 0 30*@vh;
+    height: 155*@vh;
+    background: #fff;
+    margin: 30*@vh 0;
     .oImg {
-      width: 100%;
-      border-radius: 20*@vh;
+      width: 108*@vh;
+      height: 108*@vh;
+      border-radius: 50%;
+      margin-right: 20*@vh;
+      vertical-align: middle;
     }
     .oTitle {
-      font-size: 28*@vh;
+      font-size: 30*@vh;
       margin-top: 20*@vh;
+      color: #000;
     }
   }
 </style>
