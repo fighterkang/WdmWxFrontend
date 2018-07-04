@@ -9,6 +9,9 @@ import vueResorce from 'vue-resource'
 import VueWeChatTitle from 'vue-wechat-title'
 
 import FastClick from 'fastclick'
+import limitNum from './directive/onlyNum'
+
+Vue.directive('limitNum', limitNum)
 FastClick.attach(document.body)
 
 Vue.use(vueResorce)

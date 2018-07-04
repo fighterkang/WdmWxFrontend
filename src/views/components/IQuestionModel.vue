@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="true || questionModelData.show" @click="hideModel()">
+  <div class="container" v-if="questionModelData.show" @click="hideModel()">
     <div class="content" @click.stop>
       <div class="icoBox" @click="randomPractice">
         <img src="../../../static/icon/ic_pen@2x.png" alt="" class="oImg">
@@ -42,14 +42,16 @@
         })
       },
       orderPractice() {
-        this.$store.dispatch('toggleQuestionModel2', {
-          show: true,
-        })
+        console.log('顺序联系')
+//        this.$store.dispatch('toggleQuestionModel2', {
+//          show: true,
+//        })
       },
       getErrorTitle() {
-        this.$store.dispatch('toggleQuestionModel2', {
-          show: true,
-        })
+        console.log('错题集')
+//        this.$store.dispatch('toggleQuestionModel2', {
+//          show: true,
+//        })
       },
     },
     created() {

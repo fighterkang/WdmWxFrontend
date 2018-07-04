@@ -1,16 +1,16 @@
 <template>
-  <div class="container" v-if="true || questionModel2Data.show">
-    <div class="content">
-      <div class="testChoice">继续上次练习</div>
-      <div class="testChoice">重新开始练习</div>
-      <div class="practicePoint">
+  <div class="container" v-if="questionModel2Data.show" @click="hideModel()" :class="{ active: isActive }">
+    <div class="content" @click.stop>
+      <div class="testChoice" @click="continuePractice()">继续上次练习</div>
+      <div class="testChoice" @click="restartPractice()">重新开始练习</div>
+      <div class="practicePoint" @click="toActive()">
         设置练习起点
         <div class="pointIptBox">
-          题号: <input type="text" class="pointIpt"/>
+          题号: <input type="text" class="pointIpt" v-model="oPoint" v-limitNum/>
         </div>
-        <div class="oBtnBox">
-          <span class="oBtn">取消</span>
-          <span class="oBtn">确定</span>
+        <div class="oBtnBox" @click.stop>
+          <span class="oBtn" @click="outActive()">取消</span>
+          <span class="oBtn" @click="makeSure()">确定</span>
         </div>
       </div>
     </div>
@@ -24,11 +24,39 @@
 //      IDetailOne
     },
     data() {
-      return {}
+      return {
+        isActive: false,
+        oPoint: '',
+      }
     },
     computed: {...mapState(['questionModel2Data'])},
     watch: {},
-    methods: {},
+    methods: {
+      hideModel() {
+        this.$store.dispatch('toggleQuestionModel2', {
+          show: false,
+        })
+      },
+      toActive() {
+        this.isActive = true
+      },
+      outActive() {
+        this.isActive = false
+      },
+      makeSure() {
+        if (this.oPoint) {
+          console.log(`I am sure to do that ${this.oPoint}`)
+        } else {
+          this.$Helper.message.toast({text: '请选择练习起点', long: 2000})
+        }
+      },
+      continuePractice() {
+        console.log('继续练习')
+      },
+      restartPractice() {
+        console.log('重新开始练习')
+      },
+    },
     created() {
     },
     mounted() {
@@ -79,10 +107,12 @@
         display: none;
         .oBtn {
           display: inline-block;
-          width: 50%;
+          width: 49%;
         }
       }
-      &.active {
+    }
+    &.active {
+      .content {
         height: 502*@vh;
         margin-top: -251*@vh;
         .pointIptBox {
