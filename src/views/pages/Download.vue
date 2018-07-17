@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="container bac-image" @click="jumpPage" style="backgroundImage: url('static/download.jpg')">
-
+  <div class="container bac-image" @click="jumpPage">
+    <img src="static/download.jpg" alt="a">
   </div>
 </template>
 <script>
@@ -32,6 +32,9 @@ export default {
 <style lang="less" scoped>
   @import url('../../theme/index.less');
   .container {
-    
+    img {
+      height: 100%;
+      width: 100%;
+    }
   }
 </style>

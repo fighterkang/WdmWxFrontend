@@ -1,36 +1,43 @@
 <template>
   <div class="container">
     <span class="backFlag" @click="goBack"><</span>
-    <span class="examTitle">{{examHeadInfo.title}}</span>
-    <span class="vipInfo">{{examHeadInfo.vipTime || '会员充值'}}</span>
+    <span class="examTitle">{{examHeadInfoTitle}}</span>
+    <span class="vipInfo">{{examHeadInfoVipTime || '会员充值'}}</span>
   </div>
 </template>
 <script>
   //  import IDetailOne from '../components/IDetailOne'
-  import { mapState } from 'vuex'
+  import {mapState} from 'vuex'
+
   export default {
     components: {},
     data() {
       return {}
     },
     computed: {
-      ...mapState(['examHeadInfo']),
+      ...mapState(['examHeadInfoTitle', 'examHeadInfoVipTime']),
     },
     watch: {},
     methods: {
       goBack() {
-        window.history.go(-1)
+//        history.back(-1)
+        this.$router.back(-1)
       },
     },
-    created() {},
+    created() {
+    },
     mounted() {
-      console.log(mapState(['examHeadInfo']))
+      console.log('this.$router')
+      console.log(this.$router)
+      console.log('history')
+      console.log(history)
     },
   }
 </script>
 <style lang="less" scoped>
   @import url('../../theme/index.less');
-  .container{
+
+  .container {
     background: @bgColor;
     overflow-x: hidden;
     overflow-y: auto;

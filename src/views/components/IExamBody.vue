@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" @click="skipTo">
     <img :src="initData.ico" class="oImg">
     <div class="oTitle">
       {{initData.className}}
@@ -17,15 +17,28 @@
     },
     computed: {},
     watch: {},
-    methods: {},
-    created() {},
-    mounted() {},
-    props: ['initData'],
+    methods: {
+      skipTo() {
+        let oObj = {}
+        oObj[this.skipUrl + 'PId'] = this.initData.id
+        this.$store.dispatch('ChangeCurrentClassId', {...oObj})
+        this.$store.dispatch('ChangeExamInfoTitle', this.initData.className)
+        this.$Helper.jumpPage({name: this.skipUrl}, this)
+      },
+    },
+    created() {
+    },
+    mounted() {
+      console.log(this.initData)
+      console.log(this.skipUrl)
+    },
+    props: ['initData', 'skipUrl'],
   }
 </script>
 <style lang="less" scoped>
   @import url('../../theme/index.less');
-  .container{
+
+  .container {
     background: @bgColor;
     overflow-x: hidden;
     overflow-y: auto;

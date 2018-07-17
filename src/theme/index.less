@@ -19,6 +19,7 @@
 @fontActive5: #fbad2b;
 @fontActive6: #1fb922;
 @vh: 100/1334vh;
+@wh: 100/375wh;
 
 .main-font{
   color: @fontColor1;
@@ -31,4 +32,14 @@
 .normal-font{
   color: @fontColor3;
   font-weight: 300;
+}
+.clearfix:after{
+  display: block;
+  clear: both;
+  content: "";
+  visibility: hidden;
+  height: 0;
+}
+.clearfix{
+  zoom:1;
 }
