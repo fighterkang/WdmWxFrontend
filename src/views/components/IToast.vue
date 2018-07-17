@@ -24,6 +24,10 @@ export default {
   },
   methods: {
   },
+  mounted() {
+    console.log('this.itoast')
+    console.log(this.itoast)
+  },
 }
 </script>
 
@@ -34,6 +38,8 @@ export default {
   transition: all .2s linear;
   pointer-events: none;
   text-align: center;
+  position: fixed;
+  top:0;
   z-index: 1000;
 }
 

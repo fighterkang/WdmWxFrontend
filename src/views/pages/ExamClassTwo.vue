@@ -5,7 +5,6 @@
   </div>
 </template>
 <script>
-  import {mapState} from 'vuex'
   import IExamHead from '../components/IExamHead'
   import IExamBody from '../components/IExamBody'
 
@@ -18,16 +17,21 @@
       return {
         listData: [],
         skipUrl: 'ExamClassThree',
+        pId: -1,
       }
     },
-    computed: {...mapState(['currentClass'])},
+    props: {
+      classId: String,
+    },
+    computed: {},
     watch: {},
     methods: {},
     created() {
     },
     mounted() {
+      this.pId = parseInt(localStorage.getItem('ExamClassTwoPId') || -1)
       this.$Helper.ajax({
-        url: 'examCenter/getSecondClass?OneClassId=' + this.currentClass.ExamClassTwoPId,
+        url: 'examCenter/getSecondClass?OneClassId=' + this.pId,
         method: 'GET',
       }).then(
         (res) => {

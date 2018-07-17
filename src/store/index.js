@@ -47,9 +47,11 @@ const store = new Vuex.Store({
     },
     examHeadInfoTitle: '考试中心',
     examHeadInfoVipTime: 0,
-    currentClass: {
-      ExamClassTwoPId: -1,
-      ExamClassThreePId: -1,
+    questionModelData: {
+      show: false,
+    },
+    questionModel2Data: {
+      show: false,
     },
   },
   actions: {
@@ -107,8 +109,11 @@ const store = new Vuex.Store({
     ChangeExamInfoVipTime({ commit, dispatch }, data) {
       commit('CHNAGEEXAMHEADVIPTIME', data)
     },
-    ChangeCurrentClassId({ commit, dispatch }, data) {
-      commit('CHNAGECURRENTCLASSID', data)
+    toggleQuestionModel({ commit, dispatch }, data) {
+      commit('TOGGLEQUESTIONMODEL', data)
+    },
+    toggleQuestionModel2({ commit, dispatch }, data) {
+      commit('TOGGLEQUESTIONMODEL2', data)
     },
   },
   mutations: {
@@ -197,8 +202,11 @@ const store = new Vuex.Store({
     CHNAGEEXAMHEADVIPTIME(state, data) {
       Object.assign(state.examHeadInfoVipTime, data)
     },
-    CHNAGECURRENTCLASSID(state, data) {
-      Object.assign(state.currentClass, data)
+    TOGGLEQUESTIONMODEL(state, data) {
+      Object.assign(state.questionModelData, data)
+    },
+    TOGGLEQUESTIONMODEL2(state, data) {
+      Object.assign(state.questionModel2Data, data)
     },
   },
   modules: {
