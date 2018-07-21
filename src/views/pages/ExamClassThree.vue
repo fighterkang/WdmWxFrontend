@@ -1,7 +1,7 @@
 <template>
   <div class="containerk">
     <div class="content">
-      <IExamHead/>
+      <!--<IExamHead/>-->
       <IExamQuestionType v-for="(item, key) in listData" :initData="item" :skipUrl="skipUrl" :key="key"/>
       <div class="oTest" @click="directTest">直接考试</div>
     </div>
@@ -30,7 +30,7 @@
     watch: {},
     methods: {
       directTest() {
-        this.$Helper.message.toast({ text: '考试针对题型提交好后不可修改考试时长60分钟', long: 2000 })
+        this.$Helper.message.toast({text: '考试针对题型提交好后不可修改考试时长60分钟', long: 2000})
       },
     },
     created() {
@@ -43,6 +43,16 @@
       }).then(
         (res) => {
           this.listData = res.data
+        },
+        () => {
+        }
+      )
+      this.$Helper.ajax({
+        url: 'examCenter/orderPractice?ThirdClassId=4&titleId=1',
+        method: 'GET',
+      }).then(
+        (res) => {
+          console.log(res.data[0].allAnswer)
         },
         () => {
         }

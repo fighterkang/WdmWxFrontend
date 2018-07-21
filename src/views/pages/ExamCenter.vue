@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <IExamHead/>
+    <!--<IExamHead/>-->
     <IExamBody v-for="(item, key) in listData" :initData="item" :skipUrl="skipUrl" :key="key"/>
   </div>
 </template>
