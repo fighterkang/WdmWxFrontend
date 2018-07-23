@@ -2,7 +2,7 @@
   <div class="containerk">
     <div class="content">
       <!--<IExamHead/>-->
-      <IExamQuestionType v-for="(item, key) in listData.thirdClass" :initData="item" :skipUrl="skipUrl" :key="key"/>
+      <IExamQuestionType v-for="(item, key) in listData.thirdClass" :initData="item" :skipUrl="skipUrl" :isTest="true" :key="key"/>
       <!--<div class="oTest" @click="directTest">直接考试</div>-->
     </div>
     <IQuestionModel/>

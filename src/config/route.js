@@ -10,7 +10,10 @@ export default {
   '100': [
     'Detail', 'PostDetail', 'ExamClassThree',
   ],
-  '1000': [
-    'analyticalQuestions', 'choiseQuestion', 'MockTest',
+  '300': [
+    'MockTest',
+  ],
+  '400': [
+    'analyticalQuestions', 'choiseQuestion',
   ],
 }
