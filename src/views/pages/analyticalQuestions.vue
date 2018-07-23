@@ -2,25 +2,20 @@
   <div class="container">
     <header class="aType">简答题</header>
     <section>
-      <h3 class="aQuestion">1、建立合理的生活制度可以培养幼儿哪种习惯？</h3>
+      <h3 class="aQuestion">{{listData[currentIndex].title}}</h3>
       <div v-if="initData.type == 2">
         <h3 class="answer">答案</h3>
         <div class="answerDetail">
-          建立合理的生活制度可以培养幼儿哪种习惯
-          建立合理的生活制度可以培养幼儿哪种习惯
-          建立合理的生活制度可以培养幼儿哪种习惯
+          {{listData[currentIndex].answer}}
         </div>
         <h3 class="analysis">解析：</h3>
         <div class="analysisDetail">
-          这是解析这是解析
-          这是解析这是解析
-          这是解析这是解析
-          这是解析这是解析
+          {{listData[currentIndex].suggesstion}}
         </div>
       </div>
     </section>
     <footer>
-      <button>下一题</button>
+      <button @click="nextQ()">下一题</button>
     </footer>
   </div>
 </template>
@@ -33,21 +28,51 @@
     },
     data() {
       return {
-        test: {
-          a: '123',
-        },
-        initData: {
-//       type   1:单选 2:多选
-          type: 2,
-        },
+        listData: [{}],
+        currentIndex: 0,
+        initData: JSON.parse(localStorage.getItem('questionInfo')),
       }
     },
     computed: {},
     watch: {},
-    methods: {},
+    methods: {
+      nextQ() {
+        if (!this.listData[++this.currentIndex]) {
+          this.$Helper.message.toast({long: 2000, text: '暂无更多内容'})
+          this.currentIndex--
+        }
+      },
+    },
     created() {
     },
     mounted() {
+      this.currentIndex = 0
+      let oUrl
+      if (this.initData.practiceType === 'random') {
+        oUrl = 'examCenter/randomPractice?ThirdClassId=5'
+      } else {
+        oUrl = 'examCenter/orderPractice?ThirdClassId=' + this.initData.pId + '&titleId=' + this.initData.startPointId
+      }
+      this.$Helper.ajax({
+        url: oUrl,
+        method: 'GET',
+      }).then(
+        (res) => {
+          if (res.data) {
+            this.listData = res.data
+          } else {
+            this.$Helper.message.toast({
+              text: res.message,
+              long: 2000,
+              fn: () => {
+                this.$Helper.jumpPage({name: 'ExamClassThree'}, this)
+              },
+            })
+          }
+        },
+        () => {
+        }
+      )
     },
 //    props: ['type', 'data'],
   }
@@ -60,6 +85,10 @@
     overflow-x: hidden;
     overflow-y: auto;
     padding: 0 40*@vh;
+    button {
+      border: none;
+      outline: none;
+    }
     .aType {
       font-size: 36*@vh;
       font-weight: 700;

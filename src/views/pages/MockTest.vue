@@ -2,8 +2,8 @@
   <div class="containerk">
     <div class="content">
       <!--<IExamHead/>-->
-      <IExamQuestionType v-for="(item, key) in listData" :initData="item" :skipUrl="skipUrl" :key="key"/>
-      <div class="oTest" @click="directTest">直接考试</div>
+      <IExamQuestionType v-for="(item, key) in listData.thirdClass" :initData="item" :skipUrl="skipUrl" :key="key"/>
+      <!--<div class="oTest" @click="directTest">直接考试</div>-->
     </div>
     <IQuestionModel/>
   </div>
@@ -30,11 +30,7 @@
     watch: {},
     methods: {
       directTest() {
-        this.$Helper.jumpPage({name: 'MockTest'}, this)
-        this.$Helper.message.toast({
-          text: '考试针对题型提交好后不可修改考试时长60分钟',
-          long: 2000,
-        })
+        this.$Helper.message.toast({text: '考试针对题型提交好后不可修改考试时长60分钟', long: 2000})
       },
     },
     created() {
@@ -48,7 +44,7 @@
     mounted() {
       this.pId = parseInt(localStorage.getItem('ExamClassThreePId') || -1)
       this.$Helper.ajax({
-        url: 'examCenter/getThirdClass?SecondClassId=' + this.pId,
+        url: 'examCenter/mockExam?SecondId=' + this.pId,
         method: 'GET',
       }).then(
         (res) => {
@@ -57,16 +53,16 @@
         () => {
         }
       )
-      this.$Helper.ajax({
-        url: 'examCenter/orderPractice?ThirdClassId=4&titleId=1',
-        method: 'GET',
-      }).then(
-        (res) => {
-          console.log(res.data[0].allAnswer)
-        },
-        () => {
-        }
-      )
+//      this.$Helper.ajax({
+//        url: 'examCenter/orderPractice?ThirdClassId=4&titleId=1',
+//        method: 'GET',
+//      }).then(
+//        (res) => {
+//          console.log(res.data[0].allAnswer)
+//        },
+//        () => {
+//        }
+//      )
     },
   }
 </script>

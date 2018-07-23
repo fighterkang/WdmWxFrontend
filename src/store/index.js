@@ -54,6 +54,7 @@ const store = new Vuex.Store({
     questionModel2Data: {
       show: false,
     },
+    currentClass3Id: -1,
   },
   actions: {
     ToggleBar({ commit, dispatch }, data) {
@@ -115,6 +116,9 @@ const store = new Vuex.Store({
     },
     toggleQuestionModel2({ commit, dispatch }, data) {
       commit('TOGGLEQUESTIONMODEL2', data)
+    },
+    changeClass3Id({ commit, dispatch }, data) {
+      commit('CHANGECLASS3ID', data)
     },
   },
   mutations: {
@@ -208,6 +212,9 @@ const store = new Vuex.Store({
     },
     TOGGLEQUESTIONMODEL2(state, data) {
       Object.assign(state.questionModel2Data, data)
+    },
+    CHANGECLASS3ID(state, data) {
+      state.currentClass3Id = data
     },
   },
   modules: {

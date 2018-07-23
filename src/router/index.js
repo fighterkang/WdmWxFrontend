@@ -14,6 +14,13 @@ Vue.use(Router)
 //   'PostDetail': '帖子详情',
 //   'Login': '登录',
 //   'Share': '注册',
+//   KKK
+//   'ShareMIniVideo': '分享小视频',
+//   'ExamCenter': '考试中心(一级)',
+//   'ExamClassTwo': '考试中心(二级)',
+//   'ExamClassThree': '考试中心(三级)',
+//   'choiseQuestion': '选择题',
+//   'analyticalQuestions': '简答题',
 // }
 let route = []
 const RouterFile = Helper.requireAll(require.context(`../views/pages`, true, /\.vue$/))

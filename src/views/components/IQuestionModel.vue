@@ -9,9 +9,13 @@
         <img src="../../../static/icon/ic_time@2x.png" alt="" class="oImg">
         <div>顺序练习</div>
       </div>
-      <div class="icoBox" @click="getErrorTitle">
+      <div class="icoBox" @click="getErrorTitle" v-show="questionModelData.questionType === 1">
         <img src="../../../static/icon/ic_book@2x.png" alt="" class="oImg">
         <div>错题集锦</div>
+      </div>
+      <div class="icoBox" @click="orderPractice" v-show="questionModelData.questionType !== 1">
+        <!--<img src="../../../static/icon/ic_time@2x.png" alt="" class="oImg">-->
+        <!--<div>顺序练习</div>-->
       </div>
     </div>
     <IQuestionModel2/>
@@ -46,6 +50,7 @@
           startPointId: 1,
           pId: localStorage.getItem('ExamClassThreePId'),
           type: this.questionModelData.questionType,
+          practiceType: 'random',
         }))
       },
       orderPractice() {
@@ -56,9 +61,14 @@
       },
       getErrorTitle() {
         console.log(this.questionModelData.questionType)
-//        this.$store.dispatch('toggleQuestionModel2', {
-//          show: true,
-//        })
+        let skipUrl = this.questionModelData.questionType === 1 ? 'choiseQuestion' : 'analyticalQuestions'
+        this.$Helper.jumpPage({name: skipUrl}, this)
+        localStorage.setItem('questionInfo', JSON.stringify({
+          startPointId: 1,
+          pId: localStorage.getItem('ExamClassThreePId'),
+          type: this.questionModelData.questionType,
+          practiceType: 'correct',
+        }))
       },
     },
     created() {

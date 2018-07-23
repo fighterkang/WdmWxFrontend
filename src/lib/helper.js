@@ -108,7 +108,7 @@ const Helper = {
     return str + (str.length >= len ? '...' : '')
   },
   message: {
-    toast({ text, long } = {}) {
+    toast({ text, long, fn } = {}) {
       if (this.timerId) clearInterval(this.timerId)
       if (!long) {
         dispatch('itoast/update', { text: null, show: false })
@@ -116,6 +116,9 @@ const Helper = {
       }
       dispatch('itoast/update', { text, show: true })
       this.timerId = setTimeout(() => {
+        if (fn) {
+          fn()
+        }
         dispatch('itoast/update', { text, show: false })
       }, long)
     },

@@ -40,6 +40,7 @@
   </div>
 </template>
 <script>
+  import {mapState} from 'vuex'
   import Iinput from '../components/Iinput.vue'
 
   export default {
@@ -48,9 +49,6 @@
     },
     data() {
       return {
-        test: {
-          a: '123',
-        },
         initData: JSON.parse(localStorage.getItem('questionInfo')),
         listData: [{}],
         currentIndex: 0,
@@ -58,7 +56,7 @@
         showAnswer: false,
       }
     },
-    computed: {},
+    computed: {...mapState(['currentClass3Id'])},
     watch: {},
     methods: {
       nextQ() {
@@ -73,6 +71,17 @@
       changeAnswer(data) {
         if (!this.currentAnswer) {
           this.currentAnswer = data
+          if (this.currentAnswer !== this.listData[this.currentIndex].trueAnswer) {
+            this.$Helper.ajax({
+              url: 'examCenter/addErrorTitle?titleId=' + this.listData[this.currentIndex].id + '&modelType=1',
+              method: 'GET',
+            }).then(
+              (res) => {
+              },
+              () => {
+              }
+            )
+          }
         }
       },
       toggleShow() {
@@ -82,12 +91,31 @@
     created() {
     },
     mounted() {
+      this.currentIndex = 0
+      let oUrl
+      if (this.initData.practiceType === 'random') {  // 随机
+        oUrl = 'examCenter/randomPractice?ThirdClassId=4'
+      } else if (this.initData.practiceType === 'order') { // 顺序
+        oUrl = 'examCenter/orderPractice?ThirdClassId=' + this.initData.pId + '&titleId=' + this.initData.startPointId
+      } else { // 错题
+        oUrl = 'examCenter/getErrorTitle?ThirdId=' + this.currentClass3Id + '&updateTime=' + new Date().getTime()
+      }
       this.$Helper.ajax({
-        url: 'examCenter/randomPractice?ThirdClassId=4', // + this.initData.pId
+        url: oUrl,
         method: 'GET',
       }).then(
         (res) => {
-          this.listData = res.data
+          if (res.data) {
+            this.listData = res.data
+          } else {
+            this.$Helper.message.toast({
+              text: res.message,
+              long: 2000,
+              fn: () => {
+                this.$Helper.jumpPage({name: 'ExamClassThree'}, this)
+              },
+            })
+          }
         },
         () => {
         }
@@ -105,6 +133,8 @@
     overflow-y: auto;
     button {
       margin-right: 20*@vh;
+      border: none;
+      outline: none;
     }
     .theChoice {
       background: #fff;
@@ -129,7 +159,7 @@
             font-size: 20*@vh;
             width: 36*@vh;
             height: 36*@vh;
-            line-height: 36*@vh;
+            line-height: 32*@vh;
             background: #fff;
             color: #000;
             text-align: center;

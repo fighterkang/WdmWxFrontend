@@ -29,7 +29,7 @@
         oPoint: '',
       }
     },
-    computed: {...mapState(['questionModel2Data'])},
+    computed: {...mapState(['questionModel2Data', 'questionModelData'])},
     watch: {},
     methods: {
       hideModel() {
@@ -45,16 +45,37 @@
       },
       makeSure() {
         if (this.oPoint) {
-          console.log(`I am sure to do that ${this.oPoint}`)
+          let skipUrl = this.questionModelData.questionType === 1 ? 'choiseQuestion' : 'analyticalQuestions'
+          this.$Helper.jumpPage({name: skipUrl}, this)
+          localStorage.setItem('questionInfo', JSON.stringify({
+            startPointId: this.oPoint,
+            pId: localStorage.getItem('ExamClassThreePId'),
+            type: this.questionModelData.questionType,
+            practiceType: 'order',
+          }))
         } else {
           this.$Helper.message.toast({text: '请选择练习起点', long: 2000})
         }
       },
       continuePractice() {
-        console.log('继续练习')
+        let skipUrl = this.questionModelData.questionType === 1 ? 'choiseQuestion' : 'analyticalQuestions'
+        this.$Helper.jumpPage({name: skipUrl}, this)
+        localStorage.setItem('questionInfo', JSON.stringify({
+          startPointId: 1,
+          pId: localStorage.getItem('ExamClassThreePId'),
+          type: this.questionModelData.questionType,
+          practiceType: 'order',
+        }))
       },
       restartPractice() {
-        console.log('重新开始练习')
+        let skipUrl = this.questionModelData.questionType === 1 ? 'choiseQuestion' : 'analyticalQuestions'
+        this.$Helper.jumpPage({name: skipUrl}, this)
+        localStorage.setItem('questionInfo', JSON.stringify({
+          startPointId: 1,
+          pId: localStorage.getItem('ExamClassThreePId'),
+          type: this.questionModelData.questionType,
+          practiceType: 'order',
+        }))
       },
     },
     created() {

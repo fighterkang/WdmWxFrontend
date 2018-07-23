@@ -28,13 +28,14 @@
           show: true,
           questionType: this.initData.titleModelType,
         })
+        this.$store.dispatch('changeClass3Id', this.initData.id)
       },
     },
     created() {
     },
     mounted() {
+      console.log('type class 3')
       console.log(this.initData)
-      console.log(this.skipUrl)
     },
     props: ['initData', 'skipUrl'],
   }
