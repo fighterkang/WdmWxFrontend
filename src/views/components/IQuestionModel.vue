@@ -37,18 +37,25 @@
         })
       },
       randomPractice() {
+//        this.$store.dispatch('toggleQuestionModel2', {
+//          show: true,
+//        })
+        let skipUrl = this.questionModelData.questionType === 1 ? 'choiseQuestion' : 'analyticalQuestions'
+        this.$Helper.jumpPage({name: skipUrl}, this)
+        localStorage.setItem('questionInfo', JSON.stringify({
+          startPointId: 1,
+          pId: localStorage.getItem('ExamClassThreePId'),
+          type: this.questionModelData.questionType,
+        }))
+      },
+      orderPractice() {
+        console.log(this.questionModelData.questionType)
         this.$store.dispatch('toggleQuestionModel2', {
           show: true,
         })
       },
-      orderPractice() {
-        console.log('顺序联系')
-//        this.$store.dispatch('toggleQuestionModel2', {
-//          show: true,
-//        })
-      },
       getErrorTitle() {
-        console.log('错题集')
+        console.log(this.questionModelData.questionType)
 //        this.$store.dispatch('toggleQuestionModel2', {
 //          show: true,
 //        })
@@ -58,6 +65,7 @@
     },
     mounted() {
     },
+    props: '',
   }
 </script>
 <style lang="less" scoped>

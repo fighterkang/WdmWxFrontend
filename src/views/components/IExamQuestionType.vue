@@ -26,6 +26,7 @@
       showModel() {
         this.$store.dispatch('toggleQuestionModel', {
           show: true,
+          questionType: this.initData.titleModelType,
         })
       },
     },

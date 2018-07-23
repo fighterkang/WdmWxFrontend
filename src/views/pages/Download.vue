@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="container bac-image" @click="jumpPage">
-    <img src="static/download.jpg" alt="a">
+    <img src="" alt="">
   </div>
 </template>
 <script>

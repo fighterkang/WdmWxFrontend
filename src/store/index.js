@@ -49,6 +49,7 @@ const store = new Vuex.Store({
     examHeadInfoVipTime: 0,
     questionModelData: {
       show: false,
+      questionType: 1, // questionType 1选择题  2简答题
     },
     questionModel2Data: {
       show: false,

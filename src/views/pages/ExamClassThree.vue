@@ -72,7 +72,7 @@
       position: relative;
       height: 100%;
       .oTest {
-        position: absolute;
+        position: fixed;
         width: 630*@vh;
         height: 100*@vh;
         background: #12af92;
