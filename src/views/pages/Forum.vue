@@ -168,6 +168,7 @@ export default {
     tokenGetId(token) {
       if (token) {
         this.$Helper.setCookie('basic', { ...this.basic, token })
+        debugger
         this.$Helper.ajax({
           url: 'user/LtLogin',
           // urlType: 'bbs',
